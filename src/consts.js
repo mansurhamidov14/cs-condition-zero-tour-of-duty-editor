@@ -51,13 +51,13 @@ export const WEAPONS = [
 ];
 
 export const FIELDS = [
-    { accessor: 'Skill', label: 'Skill', type: 'slider', props: { min: 0, max: 100, stepSize: 5, labelStepSize: 25 } },
-    { accessor: 'Aggression', label: 'Bravery', type: 'slider', props: { min: 0, max: 100, stepSize: 5, labelStepSize: 25 } },
-    { accessor: 'Teamwork', label: 'Co-op', type: 'slider', props: { min: 0, max: 100, stepSize: 5, labelStepSize: 25 } },
-    { accessor: 'ReactionTime', label: 'Reaction time', type: 'number' },
-    { accessor: 'AttackDelay', label: 'Attack delay', type: 'number' },
+    { accessor: 'Skill', label: 'Skill', type: 'slider', props: { min: 0, max: 100, stepSize: 5, labelStepSize: 100 } },
+    { accessor: 'Aggression', label: 'Bravery', type: 'slider', props: { min: 0, max: 100, stepSize: 5, labelStepSize: 100 } },
+    { accessor: 'Teamwork', label: 'Co-op', type: 'slider', props: { min: 0, max: 100, stepSize: 5, labelStepSize: 100 } },
     { accessor: 'Cost', label: 'Cost', type: 'slider', props: { min: 0, max: 5, stepSize: 1, labelStepSize: 5 } },
+    { accessor: 'ReactionTime', label: 'Reaction time', type: 'number', props: { stepSize: 0.01, max: 1, min: 0, minorStepSize: 0.01 } },
+    { accessor: 'AttackDelay', label: 'Attack delay', type: 'number', props: { stepSize: 0.01, max: 1, min: 0, minorStepSize: 0.01 } },
+    { accessor: 'VoicePitch', label: 'Voice pitch', type: 'number', props: { min: 0 } },
     { accessor: 'Difficulty', label: 'Difficulty', type: 'select', options: DIFFICULTIES },
-    { accessor: 'VoicePitch', label: 'Voice pitch', type: 'number' },
     { accessor: 'Skin', label: 'Skin', type: 'select', options: SKINS },
 ];

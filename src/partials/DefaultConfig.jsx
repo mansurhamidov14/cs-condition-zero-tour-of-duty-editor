@@ -20,11 +20,10 @@ export const DefaultConfig = () => {
 						) : field.type === 'slider' ? (
 							<Slider {...field.props} value={skill} onChange={setSkill} />
 						) : field.type === 'number' ? (
-							<NumericInput name={field.accessor} large fill />
+							<NumericInput name={field.accessor} large fill {...field.props} />
 						) : (
 							<InputGroup type={field.type} name={field.accessor} large />
 						)}
-						
 					</Label>
 				</Col>
 			))}

@@ -1,25 +1,23 @@
-import logo from './logo.svg';
-import './App.css';
+import { Tab, Tabs } from "@blueprintjs/core";
+import React from "react";
+import { Container } from "./components";
+import { DefaultConfig } from "./partials/DefaultConfig";
 
-function App() {
+const App = () => {
+  const [selectedTab, setSelectedTab] = React.useState('baseConfig');
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="bp3-dark">
+      <Container className="py-1">
+        <Tabs id="TabsExample" onChange={setSelectedTab} selectedTabId={selectedTab} animate>
+          <Tab id="baseConfig" title="Base configuration" panel={<DefaultConfig />} />
+          <Tab id="teammates" title="Teammates" panel={null} />
+          <Tab id="opponents" title="Opponents" panel={null} />
+        </Tabs>
+      </Container>
     </div>
-  );
+    
+  )
 }
 
 export default App;

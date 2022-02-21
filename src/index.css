@@ -47,3 +47,7 @@ code {
   padding-bottom: 36px;
 }
 
+.justify-content-between {
+  justify-content: space-between;
+}
+

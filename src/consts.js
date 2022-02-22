@@ -46,6 +46,7 @@ export const WEAPONS = [
     { value: 'g3sg1', label: 'D3/AU-1' },
     { value: 'm249', label: 'M249' },
     { value: 'knife', label: 'Knife' },
+    { value: 'shield', label: 'Tactical Shield' },
     { value: 'grenade', label: 'HE Grenade' },
     { value: 'hegren', label: 'HE Grenade (text is plural, but behaviour the same)' }
 ];

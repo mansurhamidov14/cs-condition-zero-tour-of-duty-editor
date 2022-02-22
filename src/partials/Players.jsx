@@ -20,13 +20,13 @@ import { usePlayers, useTemplates } from '../contexts/BotProfile/hooks';
 export const Players = () => {
   const [open, setOpen] = React.useState({});
   const players = usePlayers();
-  const { templates } = useTemplates();
+  const templates = useTemplates();
   return (
     <Row>
-      {players.allPlayers.map((player, playerIndex) => {
+      {players.map((player, playerIndex) => {
         const isWeaponPreferenceInherited = player.config.WeaponPreference == null;
         return (
-          <Col key={playerIndex} size={6} className="py-1">
+          <Col key={player.id} size={6} className="py-1">
             <Card>
               <Row className="justify-content-between">
                 <Col size={9}>
@@ -38,31 +38,33 @@ export const Players = () => {
               </Row>
               <Collapse isOpen={open[playerIndex]}>
                 <Row>
-                  <Col size={6}>
+                  <Col size={6} className="py-1">
                     <Label>
                       Player name
-                      <InputGroup value={player.name} onChange={(e) => players.setPlayerName(playerIndex, e.target.value)} type="text" />
+                      <InputGroup value={player.name} onChange={(e) => player.setName(e.target.value)} type="text" />
                     </Label>
                   </Col>
                   <Col size={12}>
                     <H5>Templates</H5>
                     <Row>
-                      {player.templates.map((playerTemplate, playerTemplateIndex) => {
+                      {player.templates.map((playerTemplate, templateIndex) => {
                         return (
-                          <Col key={playerTemplate} size={6}>
+                          <Col key={templateIndex} size={6} className="py-1">
                             <ControlGroup fill>
-                              <HTMLSelect fill value={playerTemplate} onChange={(e) => players.updateTemplate(playerIndex, playerTemplateIndex, e.target.value)}>
+                              <HTMLSelect fill value={playerTemplate} onChange={(e) => player.editTemplate(templateIndex, e.target.value)}>
                                 {templates.map((template) => (
                                   <option key={template.name} value={template.name}>{template.name}</option>
                                 ))}
                               </HTMLSelect>
-                              <Button onClick={() => players.removeTemplate(playerIndex, playerTemplateIndex)} icon="minus" intent="danger" />
+                              {Boolean(templateIndex) && (
+                                <Button onClick={() => player.removeTemplate(templateIndex)} icon="minus" intent="danger" />
+                              )}
                             </ControlGroup>
                           </Col>
                         )
                       })}
                       <Col size={12} className="py-1">
-                        <Button intent="success" icon="plus" small onClick={() => players.addTemplate(playerIndex)}>
+                        <Button intent="success" icon="plus" small onClick={() => player.addTemplate(templates[0].name)}>
                           Add template
                         </Button>
                       </Col>
@@ -78,25 +80,22 @@ export const Players = () => {
                             <Label>
                               {field.label}
                               {field.type === 'select' ? (
-                                <HTMLSelect disabled={isValueInheritedFromTemplate} value={player.config[field.accessor]} onChange={(e) => players.setConfig(playerIndex, field.accessor, e.target.value)}>
+                                <HTMLSelect disabled={isValueInheritedFromTemplate} value={player.config[field.accessor]} onChange={(e) => player.setConfig(field.accessor, e.target.value)}>
                                   {field.options.map((opt) => (
-                                    <option value={opt.value}>{opt.label}</option>
+                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
                                   ))}
                                 </HTMLSelect>
                               ) : field.type === 'slider' ? (
-                                <Slider disabled={isValueInheritedFromTemplate} value={Number(player.config[field.accessor]) || 0} small {...field.props} onChange={(value) => players.setConfig(playerIndex, field.accessor, value)} />
+                                <Slider disabled={isValueInheritedFromTemplate} value={Number(player.config[field.accessor]) || 0} small {...field.props} onChange={(value) => player.setConfig(field.accessor, value)} />
                               ) : field.type === 'number' ? (
-                                <NumericInput disabled={isValueInheritedFromTemplate} value={player.config[field.accessor]} onValueChange={(_, value) => players.setConfig(playerIndex, field.accessor, value)} name={field.accessor} fill {...field.props} />
+                                <NumericInput disabled={isValueInheritedFromTemplate} value={player.config[field.accessor]} onValueChange={(_, value) => player.setConfig(field.accessor, value)} name={field.accessor} fill {...field.props} />
                               ) : (
-                                <InputGroup disabled={isValueInheritedFromTemplate} type={field.type} name={field.accessor} />
+                                <InputGroup onChange={(e) => player.setConfig(field.accessor, e.target.value)} disabled={isValueInheritedFromTemplate} type={field.type} name={field.accessor} />
                               )}
                             </Label>
                             <Checkbox
                               checked={isValueInheritedFromTemplate}
-                              onChange={() => {
-                                const callback = isValueInheritedFromTemplate ? players.allowToSetConfigParam : players.inheritConfigFromTemplate;
-                                callback(playerIndex, field.accessor);
-                              }}
+                              onChange={() => player.toggleConfigParamInheritance(field.accessor)}
                             >
                               Inherit from template
                             </Checkbox>
@@ -110,30 +109,29 @@ export const Players = () => {
                     <Checkbox
                       checked={isWeaponPreferenceInherited}
                       onChange={() => {
-                        const callback = isWeaponPreferenceInherited ? players.allowToSetConfigParam : players.inheritConfigFromTemplate;
-                        callback(playerIndex, 'WeaponPreference');
+                        player.toggleConfigParamInheritance('WeaponPreference');
                       }}
                     >Inherit weapon preference from template</Checkbox>
                     <Row class="py-1">
                       {!isWeaponPreferenceInherited && (
                         <>
-                          {player.config.WeaponPreference.map((value) => {
+                          {player.config.WeaponPreference.map((value, prefIndex) => {
                             return (
-                              <Col size={6} className="py-1">
+                              <Col key={`value_${prefIndex}`} size={6} className="py-1">
                                 <ControlGroup fill>
-                                  <HTMLSelect value={value} fill>
+                                  <HTMLSelect value={value} fill onChange={(e) => player.editWeaponPreference(prefIndex, e.target.value)}>
                                     <option value="none">None</option>
                                     {WEAPONS_WITHOUT_GROUPS.map((weapon) => (
                                       <option key={weapon.value} value={weapon.value}>{weapon.label}</option>
                                     ))}
                                   </HTMLSelect>
-                                  <Button intent="danger" icon="minus" />
+                                  <Button intent="danger" icon="minus" onClick={() => player.removeWeaponPreference(prefIndex)} />
                                 </ControlGroup>
                               </Col>
                             )
                           })}
                           <Col size={12} className="py-1">
-                            <Button onClick={() => players.addWeaponPreference(playerIndex, WEAPONS_WITHOUT_GROUPS[0].value)} intent="success" icon="plus" small>Add weapon preference</Button>
+                            <Button onClick={() => player.addWeaponPreference(WEAPONS_WITHOUT_GROUPS[0].value)} intent="success" icon="plus" small>Add weapon preference</Button>
                           </Col>
                         </>
                       )}  

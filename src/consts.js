@@ -63,3 +63,6 @@ export const FIELDS = [
 ];
 
 export const WEAPONS_WITHOUT_GROUPS = WEAPONS.filter(({ isWeaponGroup }) => !isWeaponGroup);
+
+export const BOT_PROFILE_STATE_UPDATE_EVENT = 'botProfileStateUpdate';
+export const BOT_PROFILE_UNMOUNT = 'botProfileUnmount';

@@ -1,15 +1,25 @@
 import React from "react";
-import { mockBotProfile } from "./mocks";
+import { BotCampaignProfile } from "../../models/BotCampaignProfile";
+import { mockContent } from "./mocks";
 
-export const BotProfileContext = React.createContext(null);
+export const BotProfileContext = React.createContext(new BotCampaignProfile(''));
 
-export const BotProfileProvider = ({ children }) => {
-  const [botProfile, setBotProfile] = React.useState(mockBotProfile);
-  const backup = React.useRef(JSON.parse(JSON.stringify(mockBotProfile)))
+export class BotProfileProvider extends React.Component {
+  constructor (props) {
+    super(props);
+    this.state = {}; 
+  }
 
-  return (
-    <BotProfileContext.Provider value={{ botProfile, setBotProfile, backup: backup.current }}>
-      {children}
-    </BotProfileContext.Provider>
-  );
-};
+  componentDidMount () {
+    const botCampaignProfile = new BotCampaignProfile(mockContent);
+    botCampaignProfile.onMount((state) => this.setState(state));
+  }
+
+  render () {
+    return (
+      <BotProfileContext.Provider value={this.state}>
+        {this.props.children}
+      </BotProfileContext.Provider>
+    );
+  }
+}

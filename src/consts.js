@@ -8,11 +8,11 @@ export const DIFFICULTIES = [
 
 export const SKINS = [
     { value: null, label: 'Auto (inherit / extend)' },
-    { value: 1, label: 'Seal' },
-    { value: 2, label: 'GSG-9' },
-    { value: 3, label: 'SAS' },
-    { value: 4, label: 'GIGN' },
-    { value: 5, label: 'Spetsnaz' }
+    { value: 1, label: 'Seal / Phoenix Connexion' },
+    { value: 2, label: 'GSG-9 / Elite Crew' },
+    { value: 3, label: 'SAS / Guerilla Warfare' },
+    { value: 4, label: 'GIGN / Arctic Avengers' },
+    { value: 5, label: 'Spetsnaz / Midwest Milita' }
 ]
 
 export const WEAPONS = [
@@ -29,7 +29,7 @@ export const WEAPONS = [
     { value: 'machinegun', label: 'Sub-Machine Gun', isWeaponGroup: true },
     { value: 'tmp', label: 'Schmidt Machine Pistol' },
     { value: 'mac10', label: 'Ingram Mac-10' },
-    { value: 'smg', label: 'KM Sub-Machine Gun' },
+    { value: 'mp5', label: 'KM Sub-Machine Gun' },
     { value: 'ump45', label: 'KM UMP45' },
     { value: 'p90', label: 'ES C90' },
     { value: 'rifle', label: 'Rifle', isWeaponGroup: true },
@@ -61,3 +61,5 @@ export const FIELDS = [
     { accessor: 'Difficulty', label: 'Difficulty', type: 'select', options: DIFFICULTIES },
     { accessor: 'Skin', label: 'Skin', type: 'select', options: SKINS },
 ];
+
+export const WEAPONS_WITHOUT_GROUPS = WEAPONS.filter(({ isWeaponGroup }) => !isWeaponGroup);

@@ -1,4 +1,5 @@
 import { BOT_PROFILE_STATE_UPDATE_EVENT, BOT_PROFILE_UNMOUNT } from "../consts";
+import { Config } from "./Config";
 import { Player } from "./Player";
 import { Template } from "./Template";
 
@@ -80,7 +81,7 @@ export class BotCampaignProfile {
                 ignoreNextLine = true;
             } else if (!ignoreNextLine) {
                 var [key, value] = this.getEntries(cleanLine);
-                if (key === 'WeaponPreference') {
+                if (key === 'WeaponPreference' && value !== 'none') {
                     weaponPreference.push(value);
                 } else {
                     entries.push([key, value]);
@@ -89,7 +90,8 @@ export class BotCampaignProfile {
             }
         });
         entries.push(['WeaponPreference', weaponPreference]);
-        return Object.fromEntries(entries)
+        var config = Object.fromEntries(entries);
+        return new Config(config);
     }
     
     getTemplates (lines) {
@@ -105,7 +107,7 @@ export class BotCampaignProfile {
                 ignoreNextLine = false;
                 currentTemplateName = cleanLine.split(' ')[1];
             } else if (!ignoreNextLine && this.blockEnds(line)) {
-                currentTemplateEntries.push(['WeaponPreference', weaponPreference]);
+                currentTemplateEntries.push(['WeaponPreference', weaponPreference.length ? weaponPreference : null]);
                 const template = new Template({
                     name: currentTemplateName,
                     config: Object.fromEntries(currentTemplateEntries)
@@ -144,7 +146,7 @@ export class BotCampaignProfile {
                 currentPlayerName = playerName;
                 currentPlayerTemplates = templatesConcat.split('+');
             } else if (!ignoreNextLine && this.blockEnds(line)) {
-                currentPlayerEntries.push(['WeaponPreference', weaponPreference]);
+                currentPlayerEntries.push(['WeaponPreference', weaponPreference.length ? weaponPreference : null]);
                 const player = new Player({
                     name: currentPlayerName,
                     templates: currentPlayerTemplates,

@@ -2,11 +2,10 @@ import React from 'react';
 import { Button, ControlGroup, H5, HTMLSelect, InputGroup, Label, NumericInput, Slider } from "@blueprintjs/core";
 import { FIELDS, WEAPONS } from "../consts";
 import { Col, Row } from "../components";
-
-const weaponPreference = ['none'];
+import { useDefaultConfig } from '../contexts/BotProfile/hooks';
 
 export const DefaultConfig = () => {
-	const [skill, setSkill] = React.useState(40);
+	const defaultConfig = useDefaultConfig();
 	return (
 		<Row className="py-1">
       <Col size={12}>
@@ -17,17 +16,17 @@ export const DefaultConfig = () => {
               <Label>
                 {field.label}
                 {field.type === 'select' ? (
-                  <HTMLSelect large>
+                  <HTMLSelect value={defaultConfig[field.accessor]} onChange={e => defaultConfig.set(field.accessor, e.target.value)} large>
                     {field.options.map((opt) => (
-                      <option value={opt.value}>{opt.label}</option>
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
                     ))}
                   </HTMLSelect>
                 ) : field.type === 'slider' ? (
-                  <Slider {...field.props} value={skill} onChange={setSkill} />
+                  <Slider {...field.props} value={Number(defaultConfig[field.accessor]) || 0} onChange={(value) => defaultConfig.set(field.accessor, value)} />
                 ) : field.type === 'number' ? (
-                  <NumericInput name={field.accessor} large fill {...field.props} />
+                  <NumericInput value={defaultConfig[field.accessor]} onValueChange={(_, value) => defaultConfig.set(field.accessor, value)} name={field.accessor} large fill {...field.props} />
                 ) : (
-                  <InputGroup type={field.type} name={field.accessor} large />
+                  <InputGroup value={defaultConfig[field.accessor]} type={field.type} name={field.accessor} large />
                 )}
               </Label>
             </Col>
@@ -37,23 +36,23 @@ export const DefaultConfig = () => {
       <Col size={12} className="py-2">
         <H5>Weapon preference</H5>
         <Row>
-          {weaponPreference.map((value, index) => {
+          {defaultConfig.WeaponPreference?.map((value, index) => {
             return (
-              <Col size={4}>
+              <Col key={index} size={4}>
                 <ControlGroup fill>
-                  <HTMLSelect value={value} large fill>
-                    <option value="none">None</option>
+                  <Button><strong>{index + 1}</strong></Button>
+                  <HTMLSelect value={value} onChange={e => defaultConfig.editWeaponPreference(index, e.target.value)} large fill>
                     {WEAPONS.map((weapon) => (
                       <option key={weapon.value} value={weapon.value}>{weapon.label}</option>
                     ))}
                   </HTMLSelect>
-                  {Boolean(index) && <Button intent="danger" icon="minus" />}
+                  <Button intent="danger" icon="minus" onClick={() => defaultConfig.removeWeaponPreference(index)}/>
                 </ControlGroup>
               </Col>
             )
           })}
           <Col size={12} className="py-1">
-            <Button intent="success" icon="plus" small>Add weapon preference</Button>
+            <Button intent="success" icon="plus" onClick={() => defaultConfig.addWeaponPreference(WEAPONS[0].value)} small>Add weapon preference</Button>
           </Col>
         </Row>
       </Col>

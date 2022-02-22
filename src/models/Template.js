@@ -1,13 +1,14 @@
-import { BOT_PROFILE_STATE_UPDATE_EVENT } from "../consts";
 import { uuidv4 } from "../utils";
+import { StateUpdater } from "./StateUpdater";
 
-export class Template {
+export class Template extends StateUpdater {
     /**
      * 
      * @param {Object} details 
      * @param {BotCampaignProfile} botCampaignProfile 
      */
      constructor (details, botCampaignProfile) {
+        super();
         this.id = uuidv4();
         this.name = details.name;
         this.config = details.config;
@@ -40,8 +41,9 @@ export class Template {
     addWeaponPreference (weapon) {
         if (this.hasWeaponPreference()) {
             this.config.WeaponPreference.push(weapon);
+        } else {
+            this.config.WeaponPreference = [weapon];
         }
-        this.config.WeaponPreference = [weapon];
         this.updateState();
     }
 
@@ -87,9 +89,5 @@ export class Template {
 
     hasWeaponPreference () {
         return Boolean(this.config.WeaponPreference);
-    }
-
-    updateState () {
-        window.dispatchEvent(new CustomEvent(BOT_PROFILE_STATE_UPDATE_EVENT));
     }
 }

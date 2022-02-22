@@ -92,6 +92,7 @@ export const Templates = () => {
                             return (
                               <Col key={`value_${prefIndex}`} size={6} className="py-1">
                                 <ControlGroup fill>
+                                  <Button><strong>{prefIndex + 1}.</strong></Button>
                                   <HTMLSelect value={value} fill onChange={(e) => template.editWeaponPreference(prefIndex, e.target.value)}>
                                     <option value="none">None</option>
                                     {WEAPONS_WITHOUT_GROUPS.map((weapon) => (

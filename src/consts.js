@@ -59,7 +59,7 @@ export const FIELDS = [
     { accessor: 'ReactionTime', label: 'Reaction time', type: 'number', props: { stepSize: 0.01, max: 1, min: 0, minorStepSize: 0.01 } },
     { accessor: 'AttackDelay', label: 'Attack delay', type: 'number', props: { stepSize: 0.01, max: 1, min: 0, minorStepSize: 0.01 } },
     { accessor: 'VoicePitch', label: 'Voice pitch', type: 'number', props: { min: 0 } },
-    { accessor: 'Difficulty', label: 'Difficulty', type: 'select', options: DIFFICULTIES },
+    // { accessor: 'Difficulty', label: 'Difficulty', type: 'select', options: DIFFICULTIES },
     { accessor: 'Skin', label: 'Skin', type: 'select', options: SKINS },
 ];
 

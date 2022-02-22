@@ -12,3 +12,7 @@ export function usePlayers () {
 export function useTemplates () {
     return useBotProfile().templates || [];
 }
+
+export function useDefaultConfig () {
+    return useBotProfile().defaultConfig || {};
+}

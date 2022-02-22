@@ -1,5 +1,6 @@
 import { BOT_PROFILE_STATE_UPDATE_EVENT, BOT_PROFILE_UNMOUNT } from "../consts";
 import { Player } from "./Player";
+import { Template } from "./Template";
 
 export class BotCampaignProfile {
     mounted = false;
@@ -13,6 +14,7 @@ export class BotCampaignProfile {
         this.allPlayers = this.getAllPlayers(sanitizedLines);
         this.defaultConfig = this.getDefaultConfig(sanitizedLines);
         this.templates = this.getTemplates(sanitizedLines);
+        window.botProfile = this;
     }
 
     onMount(callback) {
@@ -104,10 +106,11 @@ export class BotCampaignProfile {
                 currentTemplateName = cleanLine.split(' ')[1];
             } else if (!ignoreNextLine && this.blockEnds(line)) {
                 currentTemplateEntries.push(['WeaponPreference', weaponPreference]);
-                templates.push({
+                const template = new Template({
                     name: currentTemplateName,
                     config: Object.fromEntries(currentTemplateEntries)
-                });
+                }, this);
+                templates.push(template);
                 currentTemplateEntries = [];
                 weaponPreference = [];
                 ignoreNextLine = true;

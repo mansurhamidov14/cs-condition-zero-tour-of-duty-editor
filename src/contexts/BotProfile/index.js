@@ -7,7 +7,11 @@ export const BotProfileContext = React.createContext(new BotCampaignProfile(''))
 export class BotProfileProvider extends React.Component {
   constructor (props) {
     super(props);
-    this.state = {}; 
+    this.state = {
+      defaultConfig: {},
+      templates: [],
+      allPlayers: [],
+    }; 
   }
 
   componentDidMount () {

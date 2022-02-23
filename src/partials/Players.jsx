@@ -15,12 +15,12 @@ import {
 } from "@blueprintjs/core";
 import { Col, Row } from "../components";
 import { FIELDS, WEAPONS_WITHOUT_GROUPS } from "../consts";
-import { usePlayers, useTemplates } from '../contexts/BotProfile/hooks';
+import { useBotProfile } from '../contexts/BotProfile/hooks';
 
 export const Players = () => {
   const [open, setOpen] = React.useState({});
-  const players = usePlayers();
-  const templates = useTemplates();
+  const { allPlayers: players, createPlayer, templates } = useBotProfile();
+
   return (
     <Row>
       {players.map((player, playerIndex) => {
@@ -144,6 +144,9 @@ export const Players = () => {
           </Col>
         );
       })}
+      <Col size={12} className="py-1">
+        <Button intent="success" onClick={createPlayer} icon="plus">Add player</Button>
+      </Col>
     </Row>
   );
 };

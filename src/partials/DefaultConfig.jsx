@@ -2,10 +2,10 @@ import React from 'react';
 import { Button, ControlGroup, H5, HTMLSelect, InputGroup, Label, NumericInput, Slider } from "@blueprintjs/core";
 import { FIELDS, WEAPONS } from "../consts";
 import { Col, Row } from "../components";
-import { useDefaultConfig } from '../contexts/BotProfile/hooks';
+import { useBotProfile } from '../contexts/BotProfile/hooks';
 
 export const DefaultConfig = () => {
-	const defaultConfig = useDefaultConfig();
+	const { defaultConfig } = useBotProfile();
 	return (
 		<Row className="py-1">
       <Col size={12}>

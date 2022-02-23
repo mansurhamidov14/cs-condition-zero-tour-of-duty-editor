@@ -15,14 +15,14 @@ import {
 } from "@blueprintjs/core";
 import { Col, Row } from "../components";
 import { FIELDS, WEAPONS_WITHOUT_GROUPS } from "../consts";
-import { useTemplates } from '../contexts/BotProfile/hooks';
+import { useBotProfile } from '../contexts/BotProfile/hooks';
 
 export const Templates = () => {
   const [open, setOpen] = React.useState({});
-  const templates = useTemplates();
+  const { templates, createTemplate } = useBotProfile();
   return (
     <Row>
-      {templates.map((template, templateIndex) => {
+      {templates.map((template) => {
         const isWeaponPreferenceUnset = template.config.WeaponPreference == null;
         return (
           <Col key={template.id} size={6} className="py-1">
@@ -117,6 +117,9 @@ export const Templates = () => {
           </Col>
         );
       })}
+      <Col size={12} className="py-1">
+        <Button intent="success" onClick={createTemplate} icon="plus">Add template</Button>
+      </Col>
     </Row>
   );
 };

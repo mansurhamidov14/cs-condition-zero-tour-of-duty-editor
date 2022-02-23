@@ -7,13 +7,16 @@ export class Template extends StateUpdater {
      * @param {Object} details 
      * @param {BotCampaignProfile} botCampaignProfile 
      */
-     constructor (details, botCampaignProfile) {
+     constructor (details, botCampaignProfile, saveDefaults = false) {
         super();
         this.id = uuidv4();
         this.name = details.name;
         this.config = details.config;
         this.botCampaignProfile = botCampaignProfile;
-        this.defaults = JSON.parse(JSON.stringify(details));
+        if (saveDefaults) {
+            this.defaults = JSON.parse(JSON.stringify(details));
+        }
+       
     }
 
     /**
@@ -21,7 +24,7 @@ export class Template extends StateUpdater {
      * @param {string} name 
      */
      setName (name) {
-        this.name = name;
+        this.name = name.trim();
         this.updateState();
     }
 

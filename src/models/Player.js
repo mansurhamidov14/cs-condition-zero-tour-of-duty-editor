@@ -6,8 +6,8 @@ export class Player extends Template {
      * @param {Object} details 
      * @param {BotCampaignProfile} botCampaignProfile 
      */
-    constructor (details, botCampaignProfile) {
-        super(details, botCampaignProfile);
+    constructor (details, botCampaignProfile, saveDefaults = false) {
+        super(details, botCampaignProfile, saveDefaults);
         this.templates = details.templates;
     }
     

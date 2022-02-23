@@ -1,12 +1,14 @@
 import { BOT_PROFILE_STATE_UPDATE_EVENT, BOT_PROFILE_UNMOUNT } from "../consts";
 import { Config } from "./Config";
 import { Player } from "./Player";
+import { StateUpdater } from "./StateUpdater";
 import { Template } from "./Template";
 
-export class BotCampaignProfile {
+export class BotCampaignProfile extends StateUpdater {
     mounted = false;
 
     constructor (fileContent) {
+        super();
         const lines = fileContent.split('\n');
         const sanitizedLines = lines.filter(line => {
             const trimmed = line.trim();
@@ -16,6 +18,25 @@ export class BotCampaignProfile {
         this.defaultConfig = this.getDefaultConfig(sanitizedLines);
         this.templates = this.getTemplates(sanitizedLines);
         window.botProfile = this;
+    }
+
+    createPlayer = () => {
+        const newPlayer = new Player({
+            name: `Player#${this.allPlayers.length + 1}`,
+            templates:  [this.templates?.[0]].filter(Boolean),
+            config: JSON.parse(JSON.stringify(this.defaultConfig))
+        }, this);
+        this.allPlayers.push(newPlayer);
+        this.updateState();
+    }
+
+    createTemplate = () => {
+        const newTemplate = new Template({
+            name: `Template#${this.templates.length + 1}`,
+            config: JSON.parse(JSON.stringify(this.defaultConfig))
+        }, this);
+        this.templates.push(newTemplate);
+        this.updateState();
     }
 
     onMount(callback) {
@@ -111,7 +132,7 @@ export class BotCampaignProfile {
                 const template = new Template({
                     name: currentTemplateName,
                     config: Object.fromEntries(currentTemplateEntries)
-                }, this);
+                }, this, true);
                 templates.push(template);
                 currentTemplateEntries = [];
                 weaponPreference = [];
@@ -151,7 +172,7 @@ export class BotCampaignProfile {
                     name: currentPlayerName,
                     templates: currentPlayerTemplates,
                     config: Object.fromEntries(currentPlayerEntries)
-                }, this);
+                }, this, true);
                 players.push(player);
                 weaponPreference = [];
                 currentPlayerEntries = [];

@@ -8,6 +8,7 @@ export class Config extends StateUpdater {
      */
     constructor(config) {
         super();
+        this.defaults = JSON.parse(JSON.stringify(config));
         Object.assign(this, config);
     }
 

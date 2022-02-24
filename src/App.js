@@ -1,6 +1,6 @@
 import { Tab, Tabs } from "@blueprintjs/core";
 import React from "react";
-import { Container } from "./components";
+import { ConfirmationModal, Container } from "./components";
 import { BotProfileProvider } from "./contexts/BotProfile";
 import { DefaultConfig } from "./partials/DefaultConfig";
 import { Players } from "./partials/Players";
@@ -20,6 +20,7 @@ const App = () => {
           </Tabs>
         </Container>
       </div>
+      <ConfirmationModal />
     </BotProfileProvider>
   )
 }

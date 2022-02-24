@@ -4,15 +4,37 @@ import { Col, Row, TemplateEditModal } from "../components";
 import { useBotProfile } from '../contexts/BotProfile/hooks';
 import { WEAPONS_WITHOUT_GROUPS } from '../consts';
 import { capitalizeFirstLetter } from '../utils';
+import { confirmationService } from '../services';
 
 export const Templates = () => {
-  const { templates, createTemplate } = useBotProfile();
+  const { templates, createTemplate, deleteTemplate } = useBotProfile();
   const [editedTemplate, setEditedTemplate] = React.useState();
 
   const handleSubmit = React.useCallback((template) => {
     editedTemplate.applyChanges(template);
     setEditedTemplate(null);
   }, [editedTemplate]);
+
+  const handleTemplateCreate = React.useCallback(() => {
+    const newTemplate = createTemplate();
+    setEditedTemplate(newTemplate);
+  }, [createTemplate]);
+
+  const handleClose = React.useCallback(() => {
+    if (editedTemplate.isNew) {
+      deleteTemplate(editedTemplate);
+    }
+    setEditedTemplate(null);
+  }, [deleteTemplate, editedTemplate]);
+
+  const handleDeleteClick = React.useCallback((template) => {
+    confirmationService.requestConfirmation({
+      title: 'Are you sure?',
+      body: `Template '${template.name}' will be removed. It will also affect players using this template.`,
+      confirmButton: { label: 'Yes, delete' },
+      onConfirm: () => deleteTemplate(template)
+    });
+  }, [deleteTemplate]);
 
   return (
     <div>
@@ -33,7 +55,7 @@ export const Templates = () => {
               </div>
               <ButtonGroup>
                 <Button intent="success" icon="edit" onClick={() => setEditedTemplate(template)}>Edit</Button>
-                <Button intent="danger" icon="trash">Delete</Button>
+                <Button intent="danger" icon="trash" onClick={() => handleDeleteClick(template)}>Delete</Button>
               </ButtonGroup>
             </Card>
           </Col>
@@ -41,14 +63,14 @@ export const Templates = () => {
       </Row>
       <Row>
         <Col size={12} className="py-1">
-          <Button intent="success" onClick={createTemplate} icon="plus">Add template</Button>
+          <Button intent="success" onClick={handleTemplateCreate} icon="plus">Add template</Button>
         </Col>
       </Row>
       <TemplateEditModal
         title="Edit template"
         data={editedTemplate}
         isOpen={Boolean(editedTemplate)}
-        onClose={() => setEditedTemplate(null)}
+        onClose={handleClose}
         onSubmit={handleSubmit}
       />
     </div>

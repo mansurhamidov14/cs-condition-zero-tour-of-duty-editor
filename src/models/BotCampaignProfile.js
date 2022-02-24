@@ -25,19 +25,35 @@ export class BotCampaignProfile extends StateUpdater {
             name: `Player#${this.allPlayers.length + 1}`,
             templates:  [this.templates?.[0].name].filter(Boolean),
             config: JSON.parse(JSON.stringify(this.defaultConfig))
-        }, this);
+        }, this, false, true);
         this.allPlayers.push(newPlayer);
         this.updateState();
         return newPlayer;
+    }
+
+    deletePlayer = (playerId) => {
+        this.allPlayers = this.allPlayers.filter(({ id }) => id !== playerId);
+        this.updateState();
+    }
+
+    deleteTemplate = (template) => {
+        this.templates = this.templates.filter(({ id }) => id !== template.id);
+        this.allPlayers.forEach((player) => {
+            if (player.templates.includes(template.name)) {
+                player.templates = player.templates.filter((t) => t !== template.name)
+            }
+        });
+        this.updateState();
     }
 
     createTemplate = () => {
         const newTemplate = new Template({
             name: `Template#${this.templates.length + 1}`,
             config: JSON.parse(JSON.stringify(this.defaultConfig))
-        }, this);
+        }, this, false, true);
         this.templates.push(newTemplate);
         this.updateState();
+        return newTemplate;
     }
 
     onMount(callback) {

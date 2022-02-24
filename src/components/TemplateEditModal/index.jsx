@@ -18,8 +18,6 @@ import { FIELDS, DIFFICULTIES, WEAPONS_WITHOUT_GROUPS } from "../../consts";
 import { useBotProfile } from "../../contexts/BotProfile/hooks";
 import { capitalizeFirstLetter, nullishFilter } from "../../utils";
 
-import "./style.css";
-
 const TemplateEditModal = ({ data, isOpen, onClose, onSubmit, title }) => {
   const [editedTemplateData, setEditedTemplateData] = React.useState();
   const { templates, defaultConfig } = useBotProfile();
@@ -268,6 +266,11 @@ const TemplateEditModal = ({ data, isOpen, onClose, onSubmit, title }) => {
           <Button intent="primary" onClick={() => onSubmit(editedTemplateData)}>Apply changes</Button>
         </div>
       </div>
+      <style>
+        {`.bp3-dialog {
+          width: 768px;
+        }`}
+      </style>
     </Dialog>
   );
 };

@@ -8,15 +8,37 @@ import {
 import { Col, Row, TemplateEditModal } from "../components";
 import { useBotProfile } from '../contexts/BotProfile/hooks';
 import { capitalizeFirstLetter } from '../utils';
+import { confirmationService } from '../services';
 
 export const Players = () => {
-  const { allPlayers: players, createPlayer } = useBotProfile();
+  const { allPlayers: players, createPlayer, deletePlayer } = useBotProfile();
   const [editedPlayer, setEditedPlayer] = React.useState();
 
   const handleSubmit = React.useCallback((player) => {
     editedPlayer.applyChanges(player);
     setEditedPlayer(null);
   }, [editedPlayer]);
+
+  const handleDeleteClick = React.useCallback((player) => {
+    confirmationService.requestConfirmation({
+      title: 'Are you sure?',
+      body: `Player '${player.name}' will be removed`,
+      confirmButton: { label: 'Yes, delete' },
+      onConfirm: () => deletePlayer(player.id)
+    })
+  }, [deletePlayer]);
+
+  const handlePlayerCreate = React.useCallback(() => {
+    const newPlayer = createPlayer();
+    setEditedPlayer(newPlayer);
+  }, [createPlayer]);
+
+  const handleClose = React.useCallback(() => {
+    if (editedPlayer.isNew) {
+      deletePlayer(editedPlayer.id);
+    }
+    setEditedPlayer(null);
+  }, [deletePlayer, editedPlayer]);
 
   return (
     <div>
@@ -35,7 +57,7 @@ export const Players = () => {
               </div>
               <ButtonGroup>
                 <Button intent="success" icon="edit" onClick={() => setEditedPlayer(player)}>Edit</Button>
-                <Button intent="danger" icon="trash">Delete</Button>
+                <Button intent="danger" icon="trash" onClick={() => handleDeleteClick(player)}>Delete</Button>
               </ButtonGroup>
             </Card>
           </Col>
@@ -43,14 +65,14 @@ export const Players = () => {
       </Row>
       <Row>
         <Col size={12} className="py-1">
-          <Button intent="success" onClick={createPlayer} icon="plus">Add player</Button>
+          <Button intent="success" onClick={handlePlayerCreate} icon="plus">Add player</Button>
         </Col>
       </Row>
       <TemplateEditModal
         title="Edit player"
         data={editedPlayer}
         isOpen={Boolean(editedPlayer)}
-        onClose={() => setEditedPlayer(null)}
+        onClose={handleClose}
         onSubmit={handleSubmit}
       />
     </div>

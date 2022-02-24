@@ -205,4 +205,59 @@ export class BotCampaignProfile extends StateUpdater {
         
         return players;
     }
+
+    export() {
+        const fields = ['Skill', 'Aggression', 'ReactionTime', 'AttackDelay', 'Teamwork', 'WeaponPreference', 'Cost', 'Difficulty', 'VoicePitch', 'Skin'];
+        let fileContent = `Default\n`;
+        fields.forEach(field =>  {
+            const paramValue = this.defaultConfig[field];
+            if (field === 'WeaponPreference') {
+                if (paramValue?.length) {
+                    paramValue.forEach(value => fileContent += `\t${field} = ${value}\n`);
+                } else {
+                    fileContent += `\t${field} = none\n`;
+                }
+            } else if (paramValue) {
+                if (field === 'Difficulty') {
+                    fileContent += `\t${field} = ${paramValue.join('+')}\n`;
+                } else {
+                    fileContent += `\t${field} = ${paramValue}\n`;
+                }
+            }
+        });
+        fileContent += 'End\n\n';
+
+        this.templates.forEach(template => {
+            fileContent += `Template ${template.name}\n`;
+            fields.forEach(field => {
+                const paramValue = template.config[field];
+                if (field === 'WeaponPreference' && paramValue?.length) {
+                    paramValue.forEach((value) => fileContent += `\t${field} = ${value}\n`);
+                } else if (field === 'Difficulty' && paramValue?.length) {
+                    fileContent += `\t${field} = ${paramValue.join('+')}\n`;
+                } else if (paramValue) {
+                    fileContent += `\t${field} = ${paramValue}\n`;
+                }
+            });
+            fileContent += `End\n\n`;
+        });
+
+        this.allPlayers.forEach(player => {
+            fileContent += `${player.templates.join('+')} ${player.name}\n`;
+            fields.forEach(field => {
+                const paramValue = player.config[field];
+                if (field === 'WeaponPreference' && paramValue?.length) {
+                    paramValue.forEach((value) => fileContent += `\t${field} = ${value}\n`);
+                } else if (field === 'Difficulty' && paramValue?.length) {
+                    fileContent += `\t${field} = ${paramValue.join('+')}\n`;
+                } else if (paramValue) {
+                    fileContent += `\t${field} = ${paramValue}\n`;
+                }
+            });
+            fileContent += `End\n\n`;
+        });
+
+        var file = new Blob([fileContent], { type: 'text/plain '});
+        return URL.createObjectURL(file);
+    }
 }

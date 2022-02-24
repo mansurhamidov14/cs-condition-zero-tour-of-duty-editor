@@ -12,7 +12,9 @@ export class Player extends Template {
     }
 
     applyChanges(data) {
-        super.applyChanges(data);
+        this.config = data.config;
+        this.name = data.name;
+        this.isNew = false;
         this.templates = data.templates;
     }
 }

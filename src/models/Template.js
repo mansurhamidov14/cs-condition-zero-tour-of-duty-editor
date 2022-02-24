@@ -21,6 +21,9 @@ export class Template extends StateUpdater {
 
     applyChanges(data) {
         this.config = data.config;
+        this.botCampaignProfile.allPlayers.forEach((player) => {
+            player.templates = player.templates.map(template => template === this.name ? data.name : template);
+        });
         this.name = data.name;
         this.isNew = false;
     }

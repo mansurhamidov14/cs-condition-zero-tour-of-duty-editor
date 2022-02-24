@@ -1,10 +1,12 @@
-export const DIFFICULTIES = [
-    { value: null, label: 'Auto (inherit / extend)' },
-    { value: 'EASY', label: 'Easy' },
-    { value: 'NORMAL', label: 'Normal' },
-    { value: 'HARD', label: 'Hard'},
-    { value: 'EXPERT', label: 'Expert' }
-];
+// export const DIFFICULTIES = [
+//     { value: null, label: 'Auto (inherit / extend)' },
+//     { value: 'EASY', label: 'Easy' },
+//     { value: 'NORMAL', label: 'Normal' },
+//     { value: 'HARD', label: 'Hard'},
+//     { value: 'EXPERT', label: 'Expert' }
+// ];
+
+export const DIFFICULTIES = ['EASY', 'NORMAL', 'HARD', 'EXPERT'];
 
 export const SKINS = [
     { value: null, label: 'Auto (inherit / extend)' },

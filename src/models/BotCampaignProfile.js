@@ -23,11 +23,12 @@ export class BotCampaignProfile extends StateUpdater {
     createPlayer = () => {
         const newPlayer = new Player({
             name: `Player#${this.allPlayers.length + 1}`,
-            templates:  [this.templates?.[0]].filter(Boolean),
+            templates:  [this.templates?.[0].name].filter(Boolean),
             config: JSON.parse(JSON.stringify(this.defaultConfig))
         }, this);
         this.allPlayers.push(newPlayer);
         this.updateState();
+        return newPlayer;
     }
 
     createTemplate = () => {
@@ -105,7 +106,7 @@ export class BotCampaignProfile extends StateUpdater {
                 if (key === 'WeaponPreference' && value !== 'none') {
                     weaponPreference.push(value);
                 } else {
-                    entries.push([key, value]);
+                    entries.push([key, key === 'Difficulty' ? value.split('+') : value]);
                 }
                 
             }
@@ -142,7 +143,7 @@ export class BotCampaignProfile extends StateUpdater {
                 if (key === 'WeaponPreference') {
                     weaponPreference.push(value);
                 } else {
-                    currentTemplateEntries.push([key, value]);
+                    currentTemplateEntries.push([key, key === 'Difficulty' ? value.split('+') : value]);
                 }
                 
             }
@@ -181,7 +182,7 @@ export class BotCampaignProfile extends StateUpdater {
                 if (key === 'WeaponPreference') {
                     weaponPreference.push(value);
                 } else {
-                    currentPlayerEntries.push([key, value]);
+                    currentPlayerEntries.push([key, key === 'Difficulty' ? value.split('+') : value]);
                 }
             }
         });

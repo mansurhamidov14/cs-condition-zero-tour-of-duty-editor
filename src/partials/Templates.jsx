@@ -1,125 +1,56 @@
 import React from 'react';
-import {
-  Button,
-  Card,
-  Checkbox,
-  Collapse,
-  ControlGroup,
-  H4,
-  H5,
-  HTMLSelect,
-  InputGroup,
-  Label,
-  NumericInput,
-  Slider
-} from "@blueprintjs/core";
-import { Col, Row } from "../components";
-import { FIELDS, WEAPONS_WITHOUT_GROUPS } from "../consts";
+import { Card, Button, ButtonGroup, H2 } from "@blueprintjs/core";
+import { Col, Row, TemplateEditModal } from "../components";
 import { useBotProfile } from '../contexts/BotProfile/hooks';
+import { WEAPONS_WITHOUT_GROUPS } from '../consts';
+import { capitalizeFirstLetter } from '../utils';
 
 export const Templates = () => {
-  const [open, setOpen] = React.useState({});
   const { templates, createTemplate } = useBotProfile();
+  const [editedTemplate, setEditedTemplate] = React.useState();
+
+  const handleSubmit = React.useCallback((template) => {
+    editedTemplate.applyChanges(template);
+    setEditedTemplate(null);
+  }, [editedTemplate]);
+
   return (
-    <Row>
-      {templates.map((template) => {
-        const isWeaponPreferenceUnset = template.config.WeaponPreference == null;
-        return (
-          <Col key={template.id} size={6} className="py-1">
-            <Card>
-              <Row className="justify-content-between">
-                <Col size={9}>
-                  <H4>{template.name}</H4>
-                </Col>
-                <Col className="px-1">
-                  <Button icon="chevron-down" onClick={() => setOpen(state => ({ ...state, [template.id]: !state[template.id] }))} />
-                </Col>
-              </Row>
-              <Collapse isOpen={open[template.id]}>
-                <Row>
-                  <Col size={6} className="py-1">
-                    <Label>
-                      Template name
-                      <InputGroup value={template.name} onChange={(e) => template.setName(e.target.value)} type="text" />
-                    </Label>
-                  </Col>
-                  <Col size={12}>
-                    <H5>Configs</H5>
-                    <Row>
-                      {FIELDS.map((field) => {
-                        const isValueUnset = template.config[field.accessor] == null;
-                        return (
-                          <Col className="py-1" size={6} key={field.accessor}>
-                            <Label>
-                              {field.label}
-                              {field.type === 'select' ? (
-                                <HTMLSelect disabled={isValueUnset} value={template.config[field.accessor]} onChange={(e) => template.setConfig(field.accessor, e.target.value)}>
-                                  {field.options.map((opt) => (
-                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                                  ))}
-                                </HTMLSelect>
-                              ) : field.type === 'slider' ? (
-                                <Slider disabled={isValueUnset} value={Number(template.config[field.accessor]) || 0} small {...field.props} onChange={(value) => template.setConfig(field.accessor, value)} />
-                              ) : field.type === 'number' ? (
-                                <NumericInput disabled={isValueUnset} value={template.config[field.accessor]} onValueChange={(_, value) => template.setConfig(field.accessor, value)} name={field.accessor} fill {...field.props} />
-                              ) : (
-                                <InputGroup onChange={(e) => template.setConfig(field.accessor, e.target.value)} disabled={isValueUnset} type={field.type} name={field.accessor} />
-                              )}
-                            </Label>
-                            <Checkbox
-                              checked={isValueUnset}
-                              onChange={() => template.toggleConfigParamInheritance(field.accessor)}
-                            >
-                              Inherit from template
-                            </Checkbox>
-                          </Col>
-                        )
-                      })}
-                    </Row>
-                  </Col>
-                  <Col size={12}>
-                    <H5>Weapon preference</H5>
-                    <Checkbox
-                      checked={isWeaponPreferenceUnset}
-                      onChange={() => {
-                        template.toggleConfigParamInheritance('WeaponPreference');
-                      }}
-                    >Inherit weapon preference from template</Checkbox>
-                    <Row class="py-1">
-                      {!isWeaponPreferenceUnset && (
-                        <>
-                          {template.config.WeaponPreference.map((value, prefIndex) => {
-                            return (
-                              <Col key={`value_${prefIndex}`} size={6} className="py-1">
-                                <ControlGroup fill>
-                                  <Button><strong>{prefIndex + 1}.</strong></Button>
-                                  <HTMLSelect value={value} fill onChange={(e) => template.editWeaponPreference(prefIndex, e.target.value)}>
-                                    <option value="none">None</option>
-                                    {WEAPONS_WITHOUT_GROUPS.map((weapon) => (
-                                      <option key={weapon.value} value={weapon.value}>{weapon.label}</option>
-                                    ))}
-                                  </HTMLSelect>
-                                  <Button intent="danger" icon="minus" onClick={() => template.removeWeaponPreference(prefIndex)} />
-                                </ControlGroup>
-                              </Col>
-                            )
-                          })}
-                          <Col size={12} className="py-1">
-                            <Button onClick={() => template.addWeaponPreference(WEAPONS_WITHOUT_GROUPS[0].value)} intent="success" icon="plus" small>Add weapon preference</Button>
-                          </Col>
-                        </>
-                      )}  
-                    </Row>
-                  </Col>
-                </Row>
-              </Collapse>
+    <div>
+      <Row>
+        {templates.map(template => (
+          <Col key={template.id} size={4} className="py-1">
+            <Card key={template.id}>
+              <H2>{template.name}</H2>
+              <div className="py-1">
+                <p>
+                  <strong>Difficulty:</strong>&nbsp;&nbsp;{template.config.Difficulty?.map(capitalizeFirstLetter).join(', ') || 'Difficulty was not set'}
+                </p>
+                <p>
+                  <strong>Weapons:</strong>&nbsp;&nbsp;{template.config.WeaponPreference?.map(
+                    weapon => WEAPONS_WITHOUT_GROUPS.find(({ value }) => value === weapon)?.label
+                  ).join(', ') || 'Weapon preference was not set. Probably this is skill based template'}
+                </p>
+              </div>
+              <ButtonGroup>
+                <Button intent="success" icon="edit" onClick={() => setEditedTemplate(template)}>Edit</Button>
+                <Button intent="danger" icon="trash">Delete</Button>
+              </ButtonGroup>
             </Card>
           </Col>
-        );
-      })}
-      <Col size={12} className="py-1">
-        <Button intent="success" onClick={createTemplate} icon="plus">Add template</Button>
-      </Col>
-    </Row>
+        ))}
+      </Row>
+      <Row>
+        <Col size={12} className="py-1">
+          <Button intent="success" onClick={createTemplate} icon="plus">Add template</Button>
+        </Col>
+      </Row>
+      <TemplateEditModal
+        title="Edit template"
+        data={editedTemplate}
+        isOpen={Boolean(editedTemplate)}
+        onClose={() => setEditedTemplate(null)}
+        onSubmit={handleSubmit}
+      />
+    </div>
   );
 };

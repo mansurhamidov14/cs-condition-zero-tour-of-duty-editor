@@ -51,3 +51,7 @@ code {
   justify-content: space-between;
 }
 
+.text-right {
+  text-align: right !important;
+}
+

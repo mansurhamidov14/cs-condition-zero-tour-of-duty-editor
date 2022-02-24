@@ -38,4 +38,9 @@ export class Player extends Template {
         this.templates.splice(index, 1);
         this.updateState();
     }
+
+    applyChanges(data) {
+        super.applyChanges(data);
+        this.templates = data.templates;
+    }
 }

@@ -16,7 +16,6 @@ export class Template extends StateUpdater {
         if (saveDefaults) {
             this.defaults = JSON.parse(JSON.stringify(details));
         }
-       
     }
 
     /**
@@ -92,5 +91,10 @@ export class Template extends StateUpdater {
 
     hasWeaponPreference () {
         return Boolean(this.config.WeaponPreference);
+    }
+
+    applyChanges(data) {
+        this.config = data.config;
+        this.name = data.name;
     }
 }

@@ -9,3 +9,6 @@ export const uuidv4 = str => {
 	groups.push(values[10] + values[11] + values[12] + values[13] + values[14] + values[15]);
 	return groups.join('-');
 };
+
+export const nullishFilter = value => value != null;
+export const capitalizeFirstLetter = str => typeof str === 'string' ? str[0].toUpperCase() + str.slice(1).toLowerCase() : null;

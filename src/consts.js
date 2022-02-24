@@ -1,21 +1,15 @@
-// export const DIFFICULTIES = [
-//     { value: null, label: 'Auto (inherit / extend)' },
-//     { value: 'EASY', label: 'Easy' },
-//     { value: 'NORMAL', label: 'Normal' },
-//     { value: 'HARD', label: 'Hard'},
-//     { value: 'EXPERT', label: 'Expert' }
-// ];
-
 export const DIFFICULTIES = ['EASY', 'NORMAL', 'HARD', 'EXPERT'];
 
 export const SKINS = [
-    { value: null, label: 'Auto (inherit / extend)' },
+    { value: 0, label: 'Unset' },
     { value: 1, label: 'Seal / Phoenix Connexion' },
     { value: 2, label: 'GSG-9 / Elite Crew' },
     { value: 3, label: 'SAS / Guerilla Warfare' },
     { value: 4, label: 'GIGN / Arctic Avengers' },
     { value: 5, label: 'Spetsnaz / Midwest Milita' }
-]
+];
+
+export const REQUIRED_SKINS = SKINS.filter(skin => skin.value);
 
 export const WEAPONS = [
     { value: 'pistol', label: 'Pistol', isWeaponGroup: true },
@@ -61,8 +55,7 @@ export const FIELDS = [
     { accessor: 'ReactionTime', label: 'Reaction time', type: 'number', props: { stepSize: 0.01, max: 1, min: 0, minorStepSize: 0.01 } },
     { accessor: 'AttackDelay', label: 'Attack delay', type: 'number', props: { stepSize: 0.01, max: 1, min: 0, minorStepSize: 0.01 } },
     { accessor: 'VoicePitch', label: 'Voice pitch', type: 'number', props: { min: 0 } },
-    // { accessor: 'Difficulty', label: 'Difficulty', type: 'select', options: DIFFICULTIES },
-    { accessor: 'Skin', label: 'Skin', type: 'select', options: SKINS },
+    { accessor: 'Skin', skipForTemplate: true, label: 'Skin', type: 'select', options: SKINS },
 ];
 
 export const WEAPONS_WITHOUT_GROUPS = WEAPONS.filter(({ isWeaponGroup }) => !isWeaponGroup);

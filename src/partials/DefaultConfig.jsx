@@ -22,7 +22,7 @@ export const DefaultConfig = () => {
                     ))}
                   </HTMLSelect>
                 ) : field.type === 'slider' ? (
-                  <Slider {...field.props} value={Number(defaultConfig[field.accessor]) || 0} onChange={(value) => defaultConfig.set(field.accessor, value)} />
+                  <Slider {...field.props} value={Number(defaultConfig[field.accessor]) || 0} onChange={(value) => defaultConfig.set(field.accessor, String(value))} />
                 ) : field.type === 'number' ? (
                   <NumericInput value={defaultConfig[field.accessor]} onValueChange={(_, value) => defaultConfig.set(field.accessor, value)} name={field.accessor} large fill {...field.props} />
                 ) : (

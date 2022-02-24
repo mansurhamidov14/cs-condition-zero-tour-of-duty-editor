@@ -69,6 +69,7 @@ export const Players = () => {
         </Col>
       </Row>
       <TemplateEditModal
+        mode="player"
         title="Edit player"
         data={editedPlayer}
         isOpen={Boolean(editedPlayer)}

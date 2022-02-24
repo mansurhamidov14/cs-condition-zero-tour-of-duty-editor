@@ -14,13 +14,14 @@ import {
 } from "@blueprintjs/core";
 import React from "react";
 import { Col, Row } from "..";
-import { FIELDS, DIFFICULTIES, WEAPONS_WITHOUT_GROUPS } from "../../consts";
+import { FIELDS, DIFFICULTIES, WEAPONS_WITHOUT_GROUPS, REQUIRED_SKINS } from "../../consts";
 import { useBotProfile } from "../../contexts/BotProfile/hooks";
 import { capitalizeFirstLetter, nullishFilter } from "../../utils";
 
-const TemplateEditModal = ({ data, isOpen, onClose, onSubmit, title }) => {
+const TemplateEditModal = ({ data, isOpen, onClose, onSubmit, title, mode = 'template' }) => {
   const [editedTemplateData, setEditedTemplateData] = React.useState();
   const { templates, defaultConfig } = useBotProfile();
+  const fields = React.useRef(FIELDS.filter(({ skipForTemplate }) => !skipForTemplate));
 
   React.useEffect(() => {
     if (data) {
@@ -193,35 +194,39 @@ const TemplateEditModal = ({ data, isOpen, onClose, onSubmit, title }) => {
             <Col size={12} className="py-2">
               <H5>Parameters and skills</H5>
               <Row>
-                {FIELDS.map((field) => {
+                {fields.current.map((field) => {
                   const isValueInheritedFromTemplate = editedTemplateData.config[field.accessor] == null;
                   return (
                     <Col className="py-1 px-2" size={4} key={field.accessor}>
                       <Label>
                         {field.label}
-                        {field.type === 'select' ? (
-                          <HTMLSelect disabled={isValueInheritedFromTemplate} value={editedTemplateData.config[field.accessor]} onChange={(e) => setConfig(field.accessor, e.target.value)}>
-                            {field.options.map((opt) => (
-                              <option key={opt.value} value={opt.value}>{opt.label}</option>
-                            ))}
-                          </HTMLSelect>
-                        ) : field.type === 'slider' ? (
-                          <Slider disabled={isValueInheritedFromTemplate} value={Number(editedTemplateData.config[field.accessor]) || 0} small {...field.props} onChange={(value) => setConfig(field.accessor, value)} />
+                        {field.type === 'slider' ? (
+                          <Slider disabled={isValueInheritedFromTemplate} value={Number(editedTemplateData.config[field.accessor]) || 0} small {...field.props} onChange={(value) => setConfig(field.accessor, String(value))} />
                         ) : field.type === 'number' ? (
                           <NumericInput disabled={isValueInheritedFromTemplate} value={editedTemplateData.config[field.accessor]} onValueChange={(_, value) => setConfig(field.accessor, value)} name={field.accessor} fill {...field.props} />
-                        ) : (
-                          <InputGroup onChange={(e) => setConfig(field.accessor, e.target.value)} disabled={isValueInheritedFromTemplate} type={field.type} name={field.accessor} />
-                        )}
+                        ) : null}
                       </Label>
-                      <Checkbox
-                        checked={isValueInheritedFromTemplate}
-                        onChange={() => toggleParameterInheritance(field.accessor)}
-                      >
-                        Inherit from template
-                      </Checkbox>
+                        <Checkbox
+                          checked={isValueInheritedFromTemplate}
+                          onChange={() => toggleParameterInheritance(field.accessor)}
+                        >
+                          Inherit from template
+                        </Checkbox>
                     </Col>
                   )
                 })}
+                {mode === 'player' && (
+                  <Col className="py-1 px-2" size={4}>
+                    <Label>
+                      Skin
+                      <HTMLSelect value={editedTemplateData.config.Skin} onChange={(e) => setConfig('Skin', e.target.value)}>
+                        {REQUIRED_SKINS.map((opt) => (
+                          <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                      </HTMLSelect>
+                    </Label>
+                  </Col>
+                )}
               </Row>
             </Col>
             <Col size={12}>

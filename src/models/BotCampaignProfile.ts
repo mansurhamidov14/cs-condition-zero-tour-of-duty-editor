@@ -3,24 +3,28 @@ import { Config } from "./Config";
 import { Player } from "./Player";
 import { StateUpdater } from "./StateUpdater";
 import { Template } from "./Template";
+import type { Entries, IBotProfile, IConfig, IPlayer, ITemplate } from "./types";
 
-export class BotCampaignProfile extends StateUpdater {
+export class BotCampaignProfile extends StateUpdater implements IBotProfile {
     mounted = false;
+    defaultConfig: IConfig;
+    templates: ITemplate[];
+    allPlayers: IPlayer[];
 
-    constructor (fileContent) {
+    constructor (fileContent: string) {
         super();
         const lines = fileContent.split('\n');
         const sanitizedLines = lines.filter(line => {
             const trimmed = line.trim();
             return trimmed && trimmed.indexOf('//') !== 0;
         });
-        this.allPlayers = this.getAllPlayers(sanitizedLines);
         this.defaultConfig = this.getDefaultConfig(sanitizedLines);
         this.templates = this.getTemplates(sanitizedLines);
-        window.botProfile = this;
+        this.allPlayers = this.getAllPlayers(sanitizedLines);
+        (window as any).botProfile = this;
     }
 
-    createPlayer = () => {
+    createPlayer = (): IPlayer => {
         const newPlayer = new Player({
             name: `Player#${this.allPlayers.length + 1}`,
             templates:  [this.templates?.[0].name].filter(Boolean),
@@ -31,12 +35,12 @@ export class BotCampaignProfile extends StateUpdater {
         return newPlayer;
     }
 
-    deletePlayer = (playerId) => {
+    deletePlayer = (playerId: string): void => {
         this.allPlayers = this.allPlayers.filter(({ id }) => id !== playerId);
         this.updateState();
     }
 
-    deleteTemplate = (template) => {
+    deleteTemplate = (template: ITemplate): void => {
         this.templates = this.templates.filter(({ id }) => id !== template.id);
         this.allPlayers.forEach((player) => {
             if (player.templates.includes(template.name)) {
@@ -46,7 +50,7 @@ export class BotCampaignProfile extends StateUpdater {
         this.updateState();
     }
 
-    createTemplate = () => {
+    createTemplate = (): ITemplate => {
         const newTemplate = new Template({
             name: `Template#${this.templates.length + 1}`,
             config: JSON.parse(JSON.stringify(this.defaultConfig))
@@ -56,7 +60,7 @@ export class BotCampaignProfile extends StateUpdater {
         return newTemplate;
     }
 
-    onMount(callback) {
+    onMount(callback: (botProfile: IBotProfile) => void) {
         this.mounted = true;
         callback(this);
         const updateState = () => {
@@ -76,41 +80,41 @@ export class BotCampaignProfile extends StateUpdater {
         }
     }
 
-    defaultConfigStarts (line) {
+    private defaultConfigStarts (line: string): boolean {
         return line.indexOf('Default') === 0;
     }
     
-    templateStarts (line) {
+    private templateStarts (line: string): boolean {
         return line.indexOf('Template') === 0;
     }
     
-    playerStarts (line) {
+    private playerStarts (line: string): boolean {
         return (
             !this.defaultConfigStarts(line) &&
             !this.templateStarts(line) &&
             !this.blockEnds(line) &&
-            line.trim()
+            Boolean(line.trim())
             && line.indexOf('\t') !== 0
         );
     }
     
-    blockEnds (line) {
+    private blockEnds (line: string): boolean {
         return line.indexOf('End') === 0;
     }
     
-    clearComments (line) {
+    private clearComments (line: string): string {
         var [cleanLine] = line.split('//');
         return cleanLine.trim();
     }
     
-    getEntries (cleanLine) {
-        return cleanLine.split('=').map(item => item.trim())
+    private getEntries (cleanLine: string): string[] {
+        return cleanLine.split('=').map(item => item.trim());
     }
     
-    getDefaultConfig (lines) {
-        var ignoreNextLine = true;
-        var entries = [];
-        var weaponPreference = [];
+    private getDefaultConfig (lines: string[]): IConfig {
+        let ignoreNextLine = true;
+        const entries = [];
+        const weaponPreference: IConfig['WeaponPreference'] = [];
         lines.forEach((line) => {
             var cleanLine = this.clearComments(line);
             if (this.defaultConfigStarts(cleanLine)) {
@@ -124,7 +128,6 @@ export class BotCampaignProfile extends StateUpdater {
                 } else {
                     entries.push([key, key === 'Difficulty' ? value.split('+') : value]);
                 }
-                
             }
         });
         entries.push(['WeaponPreference', weaponPreference]);
@@ -132,12 +135,12 @@ export class BotCampaignProfile extends StateUpdater {
         return new Config(config);
     }
     
-    getTemplates (lines) {
-        var ignoreNextLine = true;
-        var templates = [];
-        var weaponPreference = [];
-        var currentTemplateEntries = [];
-        var currentTemplateName = '';
+    getTemplates (lines: string[]) {
+        let ignoreNextLine = true;
+        const templates: ITemplate[] = [];
+        let weaponPreference: Required<IConfig>['WeaponPreference'] = [];
+        let currentTemplateEntries: Entries<IConfig> = [];
+        let currentTemplateName = '';
     
         lines.forEach((line) => {
             var cleanLine = this.clearComments(line);
@@ -145,10 +148,10 @@ export class BotCampaignProfile extends StateUpdater {
                 ignoreNextLine = false;
                 currentTemplateName = cleanLine.split(' ')[1];
             } else if (!ignoreNextLine && this.blockEnds(line)) {
-                currentTemplateEntries.push(['WeaponPreference', weaponPreference.length ? weaponPreference : null]);
+                currentTemplateEntries.push(['WeaponPreference', weaponPreference?.length ? weaponPreference : null]);
                 const template = new Template({
                     name: currentTemplateName,
-                    config: Object.fromEntries(currentTemplateEntries)
+                    config: Object.fromEntries(currentTemplateEntries) as any
                 }, this, true);
                 templates.push(template);
                 currentTemplateEntries = [];
@@ -159,7 +162,7 @@ export class BotCampaignProfile extends StateUpdater {
                 if (key === 'WeaponPreference') {
                     weaponPreference.push(value);
                 } else {
-                    currentTemplateEntries.push([key, key === 'Difficulty' ? value.split('+') : value]);
+                    currentTemplateEntries.push([key as keyof ITemplate['config'], key === 'Difficulty' ? value.split('+') : value]);
                 }
                 
             }
@@ -168,13 +171,13 @@ export class BotCampaignProfile extends StateUpdater {
         return templates;
     }
     
-    getAllPlayers (lines) {
+    getAllPlayers (lines: string[]) {
         var ignoreNextLine = true;
-        var players = [];
-        var weaponPreference = [];
-        var currentPlayerEntries = [];
-        var currentPlayerName = '';
-        var currentPlayerTemplates;
+        const players: IPlayer[] = [];
+        let weaponPreference: Required<IConfig>['WeaponPreference'] = [];
+        let currentPlayerEntries: Entries<IConfig> = [];
+        let currentPlayerName = '';
+        let currentPlayerTemplates: string[];
         
         lines.forEach((line) => {
             var cleanLine = this.clearComments(line);
@@ -188,7 +191,7 @@ export class BotCampaignProfile extends StateUpdater {
                 const player = new Player({
                     name: currentPlayerName,
                     templates: currentPlayerTemplates,
-                    config: Object.fromEntries(currentPlayerEntries)
+                    config: Object.fromEntries(currentPlayerEntries) as any
                 }, this, true);
                 players.push(player);
                 weaponPreference = [];
@@ -198,7 +201,7 @@ export class BotCampaignProfile extends StateUpdater {
                 if (key === 'WeaponPreference') {
                     weaponPreference.push(value);
                 } else {
-                    currentPlayerEntries.push([key, key === 'Difficulty' ? value.split('+') : value]);
+                    currentPlayerEntries.push([key as keyof IPlayer['config'], key === 'Difficulty' ? value.split('+') : value]);
                 }
             }
         });
@@ -207,13 +210,13 @@ export class BotCampaignProfile extends StateUpdater {
     }
 
     export() {
-        const fields = ['Skill', 'Aggression', 'ReactionTime', 'AttackDelay', 'Teamwork', 'WeaponPreference', 'Cost', 'Difficulty', 'VoicePitch', 'Skin'];
+        const fields: (keyof IConfig)[] = ['Skill', 'Aggression', 'ReactionTime', 'AttackDelay', 'Teamwork', 'WeaponPreference', 'Cost', 'Difficulty', 'VoicePitch', 'Skin'];
         let fileContent = `Default\n`;
         fields.forEach(field =>  {
-            const paramValue = this.defaultConfig[field];
+            const paramValue = this.defaultConfig[field] as any;
             if (field === 'WeaponPreference') {
-                if (paramValue?.length) {
-                    paramValue.forEach(value => fileContent += `\t${field} = ${value}\n`);
+                if ((paramValue as []).length) {
+                    paramValue.forEach((value: string) => fileContent += `\t${field} = ${value}\n`);
                 } else {
                     fileContent += `\t${field} = none\n`;
                 }
@@ -230,9 +233,9 @@ export class BotCampaignProfile extends StateUpdater {
         this.templates.forEach(template => {
             fileContent += `Template ${template.name}\n`;
             fields.forEach(field => {
-                const paramValue = template.config[field];
+                const paramValue = template.config[field] as any;
                 if (field === 'WeaponPreference' && paramValue?.length) {
-                    paramValue.forEach((value) => fileContent += `\t${field} = ${value}\n`);
+                    paramValue.forEach((value: string) => fileContent += `\t${field} = ${value}\n`);
                 } else if (field === 'Difficulty' && paramValue?.length) {
                     fileContent += `\t${field} = ${paramValue.join('+')}\n`;
                 } else if (paramValue) {
@@ -245,9 +248,9 @@ export class BotCampaignProfile extends StateUpdater {
         this.allPlayers.forEach(player => {
             fileContent += `${player.templates.join('+')} ${player.name}\n`;
             fields.forEach(field => {
-                const paramValue = player.config[field];
+                const paramValue = player.config[field] as any;
                 if (field === 'WeaponPreference' && paramValue?.length) {
-                    paramValue.forEach((value) => fileContent += `\t${field} = ${value}\n`);
+                    paramValue.forEach((value: string) => fileContent += `\t${field} = ${value}\n`);
                 } else if (field === 'Difficulty' && paramValue?.length) {
                     fileContent += `\t${field} = ${paramValue.join('+')}\n`;
                 } else if (paramValue) {

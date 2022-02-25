@@ -1,27 +1,31 @@
 import { StateUpdater } from "./StateUpdater";
+import type { Entry, IConfig, IConfigOptions } from "./types";
 
-export class Config extends StateUpdater {
-    /**
-     * 
-     * @param {Object} details 
-     * @param {BotCampaignProfile} botCampaignProfile 
-     */
-    constructor(config) {
+export class Config extends StateUpdater implements IConfig {
+    Skill!: string;
+    Aggression!: string;
+    Teamwork!: string;
+    Cost!: string;
+    ReactionTime!: string;
+    AttackDelay!: string;
+    VoicePitch!: string;
+    Skin!: string;
+    WeaponPreference!: string[];
+    defaults: IConfig['defaults'];
+    Difficulty!: string[];
+
+    constructor(config: IConfigOptions) {
         super();
         this.defaults = JSON.parse(JSON.stringify(config));
         Object.assign(this, config);
     }
 
-    set(key, value) {
-        this[key] = value;
+    public set(...[key, value]: Entry<IConfigOptions, keyof IConfigOptions>) {
+        this[key] = value as any;
         this.updateState();
     }
 
-    /**
-     * 
-     * @param {string} weapon Weapon's buyname. For example - 'm4a1' for 'Maverick M4A1 Carbine'
-     */
-    addWeaponPreference(weapon) {
+    public addWeaponPreference(weapon: string): void {
         if (this.hasWeaponPreference()) {
             this.WeaponPreference.push(weapon);
         } else {
@@ -30,12 +34,7 @@ export class Config extends StateUpdater {
         this.updateState();
     }
 
-    /**
-     * 
-     * @param {number} weaponIndex Index of edited weapon in WeaponPreference list of the player
-     * @param {string} value Weapon's buyname. For example - 'm4a1' for 'Maverick M4A1 Carbine'
-     */
-    editWeaponPreference(weaponIndex, value) {
+    public editWeaponPreference(weaponIndex: number, value: string) {
         if (this.hasWeaponPreference()) {
             this.WeaponPreference[weaponIndex] = value;
             this.updateState();
@@ -44,11 +43,7 @@ export class Config extends StateUpdater {
         }
     }
 
-    /**
-     * 
-     * @param {number} weaponIndex Index of edited weapon in WeaponPreference list of the player
-     */
-    removeWeaponPreference(weaponIndex) {
+    public removeWeaponPreference(weaponIndex: number) {
         if (this.hasWeaponPreference()) {
             this.WeaponPreference.splice(weaponIndex, 1);
             this.updateState();
@@ -57,7 +52,7 @@ export class Config extends StateUpdater {
         }
     }
 
-    hasWeaponPreference() {
+    private hasWeaponPreference(): boolean {
         return Boolean(this.WeaponPreference?.length);
     }
 }

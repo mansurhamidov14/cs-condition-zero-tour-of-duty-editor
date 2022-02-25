@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {
   Button,
   ButtonGroup,
@@ -6,20 +6,21 @@ import {
   H2,
 } from "@blueprintjs/core";
 import { Col, Row, TemplateEditModal } from "../components";
-import { useBotProfile } from '../contexts/BotProfile/hooks';
+import { useBotProfile } from '../contexts/BotProfile';
 import { capitalizeFirstLetter } from '../utils';
 import { confirmationService } from '../services';
+import type { IPlayer } from '../models/types';
 
 export const Players = () => {
   const { allPlayers: players, createPlayer, deletePlayer } = useBotProfile();
-  const [editedPlayer, setEditedPlayer] = React.useState();
+  const [editedPlayer, setEditedPlayer] = React.useState<IPlayer | null>(null as any);
 
-  const handleSubmit = React.useCallback((player) => {
-    editedPlayer.applyChanges(player);
+  const handleSubmit = React.useCallback((player: IPlayer) => {
+    editedPlayer?.applyChanges(player);
     setEditedPlayer(null);
   }, [editedPlayer]);
 
-  const handleDeleteClick = React.useCallback((player) => {
+  const handleDeleteClick = React.useCallback((player: IPlayer) => {
     confirmationService.requestConfirmation({
       title: 'Are you sure?',
       body: `Player '${player.name}' will be removed`,
@@ -34,7 +35,7 @@ export const Players = () => {
   }, [createPlayer]);
 
   const handleClose = React.useCallback(() => {
-    if (editedPlayer.isNew) {
+    if (editedPlayer?.isNew) {
       deletePlayer(editedPlayer.id);
     }
     setEditedPlayer(null);
@@ -74,7 +75,7 @@ export const Players = () => {
         data={editedPlayer}
         isOpen={Boolean(editedPlayer)}
         onClose={handleClose}
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit as any}
       />
     </div>
   );

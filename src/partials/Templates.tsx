@@ -1,17 +1,18 @@
-import React from 'react';
+import * as React from 'react';
 import { Card, Button, ButtonGroup, H2 } from "@blueprintjs/core";
 import { Col, Row, TemplateEditModal } from "../components";
-import { useBotProfile } from '../contexts/BotProfile/hooks';
-import { WEAPONS_WITHOUT_GROUPS } from '../consts';
-import { capitalizeFirstLetter } from '../utils';
-import { confirmationService } from '../services';
+import { useBotProfile } from "../contexts/BotProfile";
+import { WEAPONS_WITHOUT_GROUPS } from "../consts";
+import { capitalizeFirstLetter } from "../utils";
+import { confirmationService } from "../services";
+import type { ITemplate } from "../models/types";
 
 export const Templates = () => {
   const { templates, createTemplate, deleteTemplate } = useBotProfile();
-  const [editedTemplate, setEditedTemplate] = React.useState();
+  const [editedTemplate, setEditedTemplate] = React.useState<ITemplate | null>(null as any);
 
   const handleSubmit = React.useCallback((template) => {
-    editedTemplate.applyChanges(template);
+    editedTemplate?.applyChanges(template);
     setEditedTemplate(null);
   }, [editedTemplate]);
 
@@ -21,7 +22,7 @@ export const Templates = () => {
   }, [createTemplate]);
 
   const handleClose = React.useCallback(() => {
-    if (editedTemplate.isNew) {
+    if (editedTemplate?.isNew) {
       deleteTemplate(editedTemplate);
     }
     setEditedTemplate(null);

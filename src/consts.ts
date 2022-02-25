@@ -1,3 +1,26 @@
+import { IConfigOptions } from "./models/types";
+
+type Field = |
+    {
+        type: 'slider';
+        accessor: keyof IConfigOptions;
+        label: string;
+        props: any;
+    } |
+    {
+        type: 'number';
+        accessor: keyof IConfigOptions;
+        label: string;
+        props: any;
+    } |
+    {
+        type: 'select';
+        accessor: keyof IConfigOptions;
+        label: string;
+        options: any[];
+        skipForTemplate?: boolean;
+    }
+
 export const DIFFICULTIES = ['EASY', 'NORMAL', 'HARD', 'EXPERT'];
 
 export const SKINS = [
@@ -47,7 +70,7 @@ export const WEAPONS = [
     { value: 'hegren', label: 'HE Grenade (text is plural, but behaviour the same)' }
 ];
 
-export const FIELDS = [
+export const FIELDS: Field[] = [
     { accessor: 'Skill', label: 'Skill', type: 'slider', props: { min: 0, max: 100, stepSize: 5, labelStepSize: 100 } },
     { accessor: 'Aggression', label: 'Bravery', type: 'slider', props: { min: 0, max: 100, stepSize: 5, labelStepSize: 100 } },
     { accessor: 'Teamwork', label: 'Co-op', type: 'slider', props: { min: 0, max: 100, stepSize: 5, labelStepSize: 100 } },

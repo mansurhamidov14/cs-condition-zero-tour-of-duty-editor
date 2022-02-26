@@ -1,4 +1,4 @@
-export const uuidv4 = str => {
+export const uuidv4 = (str?: string): string | boolean => {
 	if (str) return /^[\da-f]{8}-[\da-f]{4}-4[\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$/i.test(str);
 	const values = [...window.crypto.getRandomValues(new Uint8Array(16))].map(val => { const v = val.toString(16); return v.length > 1 ? v : '0' + v; });
 	const groups = [];
@@ -10,5 +10,5 @@ export const uuidv4 = str => {
 	return groups.join('-');
 };
 
-export const nullishFilter = value => value != null;
-export const capitalizeFirstLetter = str => typeof str === 'string' ? str[0].toUpperCase() + str.slice(1).toLowerCase() : null;
+export const nullishFilter = (value: any) => value != null;
+export const capitalizeFirstLetter = (str: string) => str[0].toUpperCase() + str.slice(1).toLowerCase();

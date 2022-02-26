@@ -1,10 +1,10 @@
-import React from 'react';
-import { Button, ControlGroup, H5, HTMLSelect, InputGroup, Label, NumericInput, Slider } from "@blueprintjs/core";
+import * as React from 'react';
+import { Button, ControlGroup, H5, HTMLSelect, Label, NumericInput, Slider } from "@blueprintjs/core";
 import { FIELDS, WEAPONS } from "../consts";
 import { Col, Row } from "../components";
-import { useBotProfile } from '../contexts/BotProfile/hooks';
+import { useBotProfile } from '../contexts/BotProfile';
 
-export const DefaultConfig = () => {
+export const DefaultConfig: React.FC = () => {
 	const { defaultConfig } = useBotProfile();
 	return (
 		<Row className="py-1">
@@ -16,7 +16,7 @@ export const DefaultConfig = () => {
               <Label>
                 {field.label}
                 {field.type === 'select' ? (
-                  <HTMLSelect value={defaultConfig[field.accessor]} onChange={e => defaultConfig.set(field.accessor, e.target.value)} large>
+                  <HTMLSelect value={defaultConfig[field.accessor] as string} onChange={e => defaultConfig.set(field.accessor, e.target.value)} large>
                     {field.options.map((opt) => (
                       <option key={opt.value} value={opt.value}>{opt.label}</option>
                     ))}
@@ -25,9 +25,7 @@ export const DefaultConfig = () => {
                   <Slider {...field.props} value={Number(defaultConfig[field.accessor]) || 0} onChange={(value) => defaultConfig.set(field.accessor, String(value))} />
                 ) : field.type === 'number' ? (
                   <NumericInput value={defaultConfig[field.accessor]} onValueChange={(_, value) => defaultConfig.set(field.accessor, value)} name={field.accessor} large fill {...field.props} />
-                ) : (
-                  <InputGroup value={defaultConfig[field.accessor]} type={field.type} name={field.accessor} large />
-                )}
+                ) : null}
               </Label>
             </Col>
           ))}

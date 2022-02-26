@@ -1,4 +1,4 @@
-export const mockContent = `
+export const botProfileExample = `
 //----------------------------------------------------------------------------
 // BotCampaignProfile.db
 // Author: Michael S. Booth, Turtle Rock Studios (www.turtlerockstudios.com)

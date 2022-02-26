@@ -12,50 +12,61 @@ import {
   Slider, 
   ButtonGroup
 } from "@blueprintjs/core";
-import React from "react";
+import * as React from "react";
+import { IPlayer, ITemplate } from "../../models/types";
 import { Col, Row } from "..";
 import { FIELDS, DIFFICULTIES, WEAPONS_WITHOUT_GROUPS, REQUIRED_SKINS } from "../../consts";
-import { useBotProfile } from "../../contexts/BotProfile/hooks";
+import { useBotProfile } from "../../contexts/BotProfile";
 import { capitalizeFirstLetter, nullishFilter } from "../../utils";
+import * as VDF from 'vdf-parser';
 
-const TemplateEditModal = ({ data, isOpen, onClose, onSubmit, title, mode = 'template' }) => {
-  const [editedTemplateData, setEditedTemplateData] = React.useState();
+type TemplateEditModalProps = {
+  data: IPlayer | ITemplate | null;
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: IPlayer | ITemplate | null) => void;
+  title: string;
+  mode?: 'template' | 'player'
+}
+
+const TemplateEditModal: React.FC<TemplateEditModalProps> = ({ data, isOpen, onClose, onSubmit, title, mode = 'template' }) => {
+  const [editedTemplateData, setEditedTemplateData] = React.useState<IPlayer | ITemplate>(null as any);
   const { templates, defaultConfig } = useBotProfile();
-  const fields = React.useRef(FIELDS.filter(({ skipForTemplate }) => !skipForTemplate));
+  const fields = React.useRef(FIELDS.filter(({ skipForTemplate }: any) => !skipForTemplate));
 
   React.useEffect(() => {
     if (data) {
-      const editedPlayer = {
+      const editedData = {
         name: data.name,
         config: {
           ...data.config,
           WeaponPreference: data.config.WeaponPreference && [...data.config.WeaponPreference],
           Difficulty: data.config.Difficulty && [...data.config.Difficulty]
         },
-        templates: data.templates
+        templates: (data as IPlayer).templates
       };
-      setEditedTemplateData(editedPlayer)
+      setEditedTemplateData(editedData as any)
     }
   }, [data]);
 
   const isWeaponPreferenceInherited = React.useMemo(() => editedTemplateData?.config?.WeaponPreference == null, [editedTemplateData]);
   const isDifficultyInherited = React.useMemo(() => editedTemplateData?.config?.Difficulty == null, [editedTemplateData]);
 
-  const setPlayerName = React.useCallback((event) => {
+  const setPlayerName = React.useCallback((event: any) => {
     setEditedTemplateData(state => ({
-      ...state,
+      ...(state || {}),
       name: event.target.value
-    }));
+    }) as any);
   }, [editedTemplateData]);
 
-  const setConfig = React.useCallback((key, value) => {
+  const setConfig = React.useCallback((key: string, value: any) => {
     setEditedTemplateData(state => ({
       ...state,
       config: {
-        ...state.config,
+        ...(state || {}).config,
         [key]: value
       }
-    }));
+    }) as any);
   }, [editedTemplateData]);
 
   const setWeaponPreference = React.useCallback((weaponIndex, value) => {
@@ -98,14 +109,14 @@ const TemplateEditModal = ({ data, isOpen, onClose, onSubmit, title, mode = 'tem
   const addTemplate = React.useCallback(() => {
     setEditedTemplateData(state => ({
       ...state,
-      templates: [...state.templates, templates[0].name]
+      templates: [...(state as any).templates, templates[0].name]
     }));
   }, [editedTemplateData]);
 
   const setTemplate = React.useCallback((templateIndex, value) => {
     setEditedTemplateData(state => ({
       ...state,
-      templates: [...state.templates.slice(0, templateIndex), value, ...state.templates.slice(templateIndex + 1)].filter(nullishFilter)
+      templates: [...(state as any).templates.slice(0, templateIndex), value, ...(state as any).templates.slice(templateIndex + 1)].filter(nullishFilter)
     }))
   }, [editedTemplateData]);
 
@@ -118,7 +129,7 @@ const TemplateEditModal = ({ data, isOpen, onClose, onSubmit, title, mode = 'tem
       ...state,
       config: {
         ...state.config,
-        [key]: nullishFilter(state.config[key]) ? null : (data.defaults.config[key] || defaultConfig[key])
+        [key]: nullishFilter((state as any).config[key]) ? null : ((data as any)?.defaults.config[key] || (defaultConfig as any)[key])
       }
     }))
   }, [editedTemplateData]);
@@ -163,15 +174,15 @@ const TemplateEditModal = ({ data, isOpen, onClose, onSubmit, title, mode = 'tem
                 Inherit from template
               </Checkbox>
             </Col>
-            {Boolean(editedTemplateData.templates) && (
+            {Boolean((editedTemplateData as any).templates) && (
               <Col size={12}>
                 <span>Templates</span>
                 <Row>
-                  {editedTemplateData.templates.map((playerTemplate, templateIndex) => {
+                  {(editedTemplateData as any).templates.map((playerTemplate: IPlayer['templates'], templateIndex: number) => {
                     return (
                       <Col key={templateIndex} size={4} className="py-1">
                         <ControlGroup fill>
-                          <HTMLSelect fill value={playerTemplate} onChange={(e) => setTemplate(templateIndex, e.target.value)}>
+                          <HTMLSelect fill value={playerTemplate as any} onChange={(e) => setTemplate(templateIndex, e.target.value)}>
                             {templates.map((template) => (
                               <option key={template.name} value={template.name}>{template.name}</option>
                             ))}
@@ -237,7 +248,7 @@ const TemplateEditModal = ({ data, isOpen, onClose, onSubmit, title, mode = 'tem
                   toggleParameterInheritance('WeaponPreference');
                 }}
               >Inherit weapon preference from template</Checkbox>
-              <Row class="py-1">
+              <Row className="py-1">
                 {!isWeaponPreferenceInherited && (
                   <>
                     {editedTemplateData.config.WeaponPreference.map((value, prefIndex) => {

@@ -3,11 +3,11 @@ import './styles.css';
 
 type ColProps = {
   className?: string;
-  size: number;
+  size?: number;
 }
 
 const Col: React.FC<ColProps> = ({ children, className, size }) => (
-  <div className={[`col-${size}`, className].filter(Boolean).join(' ')}>
+  <div className={[size ? `col-${size}` : 'col', className].filter(Boolean).join(' ')}>
     {children}
   </div>
 );

@@ -18,7 +18,6 @@ import { Col, Row } from "..";
 import { FIELDS, DIFFICULTIES, WEAPONS_WITHOUT_GROUPS, REQUIRED_SKINS } from "../../consts";
 import { useBotProfile } from "../../contexts/BotProfile";
 import { capitalizeFirstLetter, nullishFilter } from "../../utils";
-import * as VDF from 'vdf-parser';
 
 type TemplateEditModalProps = {
   data: IPlayer | ITemplate | null;

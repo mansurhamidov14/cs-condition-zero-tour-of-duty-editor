@@ -86,3 +86,5 @@ export const WEAPONS_WITHOUT_GROUPS = WEAPONS.filter(({ isWeaponGroup }) => !isW
 export const BOT_PROFILE_STATE_UPDATE_EVENT = 'botProfileStateUpdate';
 export const BOT_PROFILE_UNMOUNT = 'botProfileUnmount';
 export const CONFIRMATION_REQUEST_EVENT = 'confirmationRequested';
+export const CAREER_MODE_STATE_UPDATE_EVENT = 'careerModeStateUpdate';
+export const CAREER_MODE_UNMOUNT = 'careerModeUnmount';

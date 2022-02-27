@@ -1,0 +1,16 @@
+.difficulty-mode-label {
+    height: 24px;
+    align-items: center;
+}
+
+.difficulty-mode-label > .col {
+    padding-right: 4px;
+}
+
+.difficulty-mode-label > .col:not(:first-child) {
+    padding-left: 4px;
+}
+
+.difficulty-mode-label .bp3-popover-wrapper {
+    margin-top: 0 !important;
+}

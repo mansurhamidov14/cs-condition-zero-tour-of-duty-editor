@@ -19,7 +19,7 @@ export class BotProfileProvider extends React.Component<{}, IBotProfile> {
   render () {
     return (
       <BotProfileContext.Provider value={this.state}>
-        {Object.keys(this.state).length ? this.props.children : <div />}
+        {this.state.mounted ? this.props.children : <div />}
       </BotProfileContext.Provider>
     );
   }

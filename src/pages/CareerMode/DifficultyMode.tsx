@@ -1,8 +1,8 @@
-import { Card, Classes, H4, H5, Icon, Label, NumericInput, Tooltip } from "@blueprintjs/core";
+import { Button, ButtonGroup, Card, Classes, H4, H5, Icon, Label, NumericInput, Tooltip } from "@blueprintjs/core";
 import * as React from "react";
-import { Col, Row } from "../../components";
+import { Col, MapEditModal, Row } from "../../components";
 import { useDifficultyMode } from "../../contexts/GameModeProvider";
-import { EDifficulty } from "../../models/types";
+import { EDifficulty, IMap } from "../../models/types";
 import { difficultyModePrimitiveFields } from "./consts";
 
 interface IProps {
@@ -11,6 +11,7 @@ interface IProps {
 
 export const DifficultyMode: React.FC<IProps> = ({ difficulty }) => {
   const mode = useDifficultyMode(difficulty);
+  const [editedMap, setEditedMad] = React.useState<IMap | null>(null);
 
   return (
     <Row className="py-1">
@@ -20,7 +21,7 @@ export const DifficultyMode: React.FC<IProps> = ({ difficulty }) => {
           {difficultyModePrimitiveFields.map((field) => (
             <Col key={field.accessor} size={4}>
               <Label>
-                <Row className="difficulty-mode-label">
+                <Row className="label-with-help">
                   <Col>{field.label}</Col>
                   {field.helperText && (
                     <Col>
@@ -81,11 +82,16 @@ export const DifficultyMode: React.FC<IProps> = ({ difficulty }) => {
                     </React.Fragment>
                   ))}
                 </p>
+                <ButtonGroup>
+                  <Button intent="success" icon="edit" onClick={() => setEditedMad(gameMap)}>Edit</Button>
+                  <Button intent="danger" icon="trash" onClick={() => {}}>Delete</Button>
+                </ButtonGroup>
               </Card>
             </Col>
           ))}
         </Row>  
       </Col>
+      <MapEditModal isOpen={Boolean(editedMap)} onClose={() => setEditedMad(null)} gameMap={editedMap} />
     </Row>
   );
 };

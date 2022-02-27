@@ -7,27 +7,18 @@ export class GameMap implements IMap {
     public config: IMapConfig;
 
     constructor (
-        private _name: string,
+        public name: string,
         options: IMapOptions,
         public difficultyMode: IMap['difficultyMode']
     ) {
         this.id = uuidv4() as string;
         this.config = {
-            FriendlyFire: options.FriendlyFire,
+            FriendlyFire: options.FriendlyFire || 0,
             threshold: options.threshold,
             minEnemies: options.minEnemies,
             tasks: this.parseMissionTasks(options.tasks),
             bots: options.bots.replaceAll('\t', ' ').split(' ').map(enemy => enemy.trim())
         };
-    }
-
-    public set name (name: string) {
-        this._name = name;
-        this.difficultyMode.careerMode.updateState();
-    }
-
-    public get name () {
-        return this._name;
     }
 
     setConfig (key: MapPrimitives, value: number) {

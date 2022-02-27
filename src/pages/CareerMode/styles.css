@@ -1,16 +1,16 @@
-.difficulty-mode-label {
+.label-with-help {
     height: 24px;
     align-items: center;
 }
 
-.difficulty-mode-label > .col {
+.label-with-help > .col {
     padding-right: 4px;
 }
 
-.difficulty-mode-label > .col:not(:first-child) {
+.label-with-help > .col:not(:first-child) {
     padding-left: 4px;
 }
 
-.difficulty-mode-label .bp3-popover-wrapper {
+.label-with-help .bp3-popover-wrapper {
     margin-top: 0 !important;
 }

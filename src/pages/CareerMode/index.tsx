@@ -10,9 +10,9 @@ export const CareerMode: React.FC = () => {
   const [selectedTab, setSelectedTab] = React.useState<EDifficulty>(EDifficulty.EASY);
 
   return (
-    <Tabs id="TabsExample" onChange={setSelectedTab as any} selectedTabId={selectedTab} animate>
+    <Tabs id="TabsExample" onChange={setSelectedTab as any} selectedTabId={selectedTab} animate vertical>
       {Object.values(EDifficulty).map(difficulty => (
-        <Tab id={difficulty} title={capitalizeFirstLetter(difficulty)} panel={<DifficultyMode difficulty={difficulty} />} />
+        <Tab id={difficulty} title={capitalizeFirstLetter(difficulty) + ' missions'} panel={<DifficultyMode difficulty={difficulty} />} />
       ))}
     </Tabs>
   );

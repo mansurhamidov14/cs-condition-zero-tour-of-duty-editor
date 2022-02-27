@@ -45,7 +45,7 @@ export const WEAPONS = [
     { value: 'shotgun', label: 'Shotgun', isWeaponGroup: true },
     { value: 'm3', label: 'Leone 12 Gauge Super' },
     { value: 'xm1014', label: 'Leone YG1265 Auto Shotgun' },
-    { value: 'machinegun', label: 'Sub-Machine Gun', isWeaponGroup: true },
+    { value: 'SMG', label: 'Sub-Machine Gun', isWeaponGroup: true },
     { value: 'tmp', label: 'Schmidt Machine Pistol' },
     { value: 'mac10', label: 'Ingram Mac-10' },
     { value: 'mp5', label: 'KM Sub-Machine Gun' },

@@ -101,6 +101,7 @@ export interface IMap {
     config: IMapConfig;
     difficultyMode: IDifficultyModeState;
     setConfig: (key: MapPrimitives, value: number) => void;
+    parseTaskName: (task: MissionTask) => string;
 }
 
 export type Entry<O, K extends keyof O> = [K, (O[K] | null)];

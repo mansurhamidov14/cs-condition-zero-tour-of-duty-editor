@@ -51,7 +51,9 @@ code {
   justify-content: space-between;
 }
 
-.align-items-center
+.full-height {
+  height: 100%;
+}
 
 .text-right {
   text-align: right !important;

@@ -29,5 +29,6 @@ export class DifficultyMode implements IDifficultyModeState {
 
     public setCostAvailabilty (cost: string, value: string) {
         this.CostAvailability[Number(cost)] = Number(value);
+        this.careerMode.updateState();
     }
 }

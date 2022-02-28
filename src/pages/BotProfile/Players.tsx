@@ -16,7 +16,7 @@ export const Players = () => {
   const [editedPlayer, setEditedPlayer] = React.useState<IPlayer | null>(null as any);
 
   const handleSubmit = React.useCallback((player: IPlayer) => {
-    editedPlayer?.applyChanges(player);
+    editedPlayer?.save(player);
     setEditedPlayer(null);
   }, [editedPlayer]);
 

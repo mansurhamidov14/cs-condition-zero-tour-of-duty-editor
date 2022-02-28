@@ -11,7 +11,7 @@ interface IProps {
 
 export const DifficultyMode: React.FC<IProps> = ({ difficulty }) => {
   const mode = useDifficultyMode(difficulty);
-  const [editedMap, setEditedMad] = React.useState<IMap | null>(null);
+  const [editedMap, setEditedMap] = React.useState<IMap | null>(null);
 
   return (
     <Row className="py-1">
@@ -36,7 +36,7 @@ export const DifficultyMode: React.FC<IProps> = ({ difficulty }) => {
                   fill
                   min={1}
                   value={String(mode[field.accessor])}
-                  onValueChange={(_, value) => mode.set(field.accessor, Number(value))}
+                  onValueChange={(value) => mode.set(field.accessor, value)}
                   name={field.accessor}
                 />
               </Label>
@@ -83,7 +83,7 @@ export const DifficultyMode: React.FC<IProps> = ({ difficulty }) => {
                   ))}
                 </p>
                 <ButtonGroup>
-                  <Button intent="success" icon="edit" onClick={() => setEditedMad(gameMap)}>Edit</Button>
+                  <Button intent="success" icon="edit" onClick={() => setEditedMap(gameMap)}>Edit</Button>
                   <Button intent="danger" icon="trash" onClick={() => {}}>Delete</Button>
                 </ButtonGroup>
               </Card>
@@ -91,7 +91,7 @@ export const DifficultyMode: React.FC<IProps> = ({ difficulty }) => {
           ))}
         </Row>  
       </Col>
-      <MapEditModal isOpen={Boolean(editedMap)} onClose={() => setEditedMad(null)} gameMap={editedMap} />
+      <MapEditModal isOpen={Boolean(editedMap)} onClose={() => setEditedMap(null)} gameMap={editedMap} />
     </Row>
   );
 };

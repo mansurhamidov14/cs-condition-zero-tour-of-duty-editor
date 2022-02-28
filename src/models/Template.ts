@@ -22,7 +22,7 @@ export class Template extends StateUpdater implements ITemplate {
         }
     }
 
-    applyChanges(data: ITemplate) {
+    save(data: ITemplate) {
         this.config = data.config;
         this.botProfile.allPlayers.forEach((player) => {
             player.templates = player.templates.map(template => template === this.name ? data.name : template);

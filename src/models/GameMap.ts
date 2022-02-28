@@ -1,4 +1,5 @@
 import { WEAPONS } from "../consts";
+import { TASK_FIELDS } from "../pages/CareerMode/consts";
 import { uuidv4 } from "../utils";
 import { IMap, IMapConfig, IMapOptions, MapPrimitives, MissionTask } from "./types";
 
@@ -6,7 +7,7 @@ export class GameMap implements IMap {
     id: string;
     public config: IMapConfig;
 
-    constructor (
+    constructor(
         public name: string,
         options: IMapOptions,
         public difficultyMode: IMap['difficultyMode']
@@ -21,11 +22,7 @@ export class GameMap implements IMap {
         };
     }
 
-    setConfig (key: MapPrimitives, value: number) {
-        this.config[key] = value;
-    }
-
-    private parseMissionTasks (tasks: string): MissionTask[] {
+    private parseMissionTasks(tasks: string): MissionTask[] {
         const tasksArray = tasks.split('\'').map(task => task.trim()).filter(Boolean);
         return tasksArray.map(task => {
             const taskParts = task.replaceAll('\'', '').replaceAll('\t', ' ').split(' ').map(task => task.trim());
@@ -43,8 +40,25 @@ export class GameMap implements IMap {
         });
     }
 
-    public parseTaskName (task: MissionTask) {
+    public save(data: IMap) {
+        const _data = JSON.parse(JSON.stringify(data));
+        this.config = {
+            ..._data.config,
+            tasks: data.config.tasks.map(task => ({
+                action: task.action,
+                withWeapon: this.getSavedTaskFieldValue('withWeapon', task),
+                amount: this.getSavedTaskFieldValue('amount', task),
+                option: this.getSavedTaskFieldValue('option', task)
+            }))
+        };
+        this.name = _data.name;
+        this.difficultyMode.careerMode.updateState();
+    }
+
+    public parseTaskName(task: MissionTask) {
         const actions = {
+            injure: 'You must injure at least {enemies} {option}',
+            injurewith: 'You must injure at least {enemies} with {weapon} {option}',
             kill: 'You must kill {enemies} {option}',
             killwith: 'You must kill {enemies} with {weapon} {option}',
             killall: 'Your team must eliminate all enemies at least once',
@@ -78,6 +92,8 @@ export class GameMap implements IMap {
         const base = { count: amount, option: _option };
         const rounds = { rounds: amount === 1 ? `a round` : `${amount} separate rounds`, option: _option };
         const actions = {
+            injure: kill,
+            injurewith: killwith,
             kill,
             killwith,
             killblind: { enemies: amount === 1 ? 'a flashbang-blinded enemy' : `${amount} flashbang-blinded enemies`, option: _option},
@@ -97,12 +113,35 @@ export class GameMap implements IMap {
         return actions[action];
     }
 
-    private bindTaskParamsToText (text: string, params?: object) {
+    private bindTaskParamsToText(text: string, params?: object) {
         if (params) {
             return Object.entries(params).reduce((acc, [key, value]) => {
                 return acc.replace(`{${key}}`, value || '');
             }, text);
         }
         return text;
+    }
+
+    private getSavedTaskFieldValue(accessor: keyof MissionTask, task: MissionTask) {
+        const field = TASK_FIELDS.find(({ id }) => id === accessor);
+        let disabled = false;
+        const value = task[accessor];
+
+        if (field?.disabledIf?.length) {
+            field.disabledIf.forEach((disabledField) => {
+                if (disabledField.is.includes((task as any)?.[disabledField.field])) {
+                    disabled = true;
+                }
+            });
+        } else if (field?.enabledIf?.length) {
+            disabled = true;
+            field.enabledIf.forEach((enabledField) => {
+              if (enabledField.is.includes((task as any)?.[enabledField.field])) {
+                disabled = false;
+              }
+            })
+        }
+
+        return disabled || value === "none" ? null : value;
     }
 }

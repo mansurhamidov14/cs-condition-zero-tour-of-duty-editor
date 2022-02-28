@@ -2,8 +2,8 @@ import { Button, Classes, ControlGroup, Dialog, H5, HTMLSelect, Icon, InputGroup
 import * as React from "react";
 import { Col, Row } from "..";
 import { useBotProfile } from "../../contexts/BotProfile";
-import { IMap } from "../../models/types";
-import { mapPrimitiveFields } from "../../pages/CareerMode/consts";
+import { IMap, MissionTask } from "../../models/types";
+import { mapPrimitiveFields, TASK_FIELDS } from "../../pages/CareerMode/consts";
 import { capitalizeFirstLetter } from "../../utils";
 
 type MapEditModalProps = {
@@ -52,6 +52,46 @@ const MapEditModal: React.FC<MapEditModalProps> = ({ gameMap, isOpen, onClose })
     }))
   }, [editedMap]);
 
+  const setTask = React.useCallback((taskIndex: number, field: keyof MissionTask, value: any) => {
+    setEditedMap((state) => ({
+      ...state as any,
+      config: {
+        ...state?.config,
+        tasks: (state?.config.tasks || []).map((task, index) => {
+          return taskIndex === index ? {
+            ...task,
+            [field]: value
+          } : task;
+        })
+      }
+    }));
+  }, [editedMap]);
+
+  const removeTask = React.useCallback((taskIndex: number) => {
+    setEditedMap((state) => ({
+      ...state as any,
+      config: {
+        ...state?.config,
+        tasks: (state?.config.tasks || []).filter((_, index) => index !== taskIndex)
+      }
+    }));
+  }, [editedMap]);
+
+  const addTask = React.useCallback(() => {
+    setEditedMap((state) => ({
+      ...state as any,
+      config: {
+        ...state?.config,
+        tasks: [...(state?.config.tasks || []), { action: 'kill', amount: 1 }]
+      }
+    }));
+  }, [editedMap])
+
+  const onSave = React.useCallback(() => {
+    gameMap?.save(editedMap as any);
+    onClose();
+  }, [gameMap, editedMap])
+
   return (
     <Dialog
       title={gameMap && `${capitalizeFirstLetter(gameMap.difficultyMode.difficulty)} - ${gameMap.name}`}
@@ -72,7 +112,7 @@ const MapEditModal: React.FC<MapEditModalProps> = ({ gameMap, isOpen, onClose })
               <H5>Rules</H5>
               <Row>
                 {mapPrimitiveFields.map((field) => (
-                  <Col size={4}>
+                  <Col key={field.accessor} size={4}>
                     <Label>
                       <Row className="label-with-help">
                         <Col>{field.label}</Col>
@@ -105,8 +145,8 @@ const MapEditModal: React.FC<MapEditModalProps> = ({ gameMap, isOpen, onClose })
                 ))}
               </Row>
             </Col>
-            <Col size={12} className="py-2">
-              <H5>Bots</H5>
+            <Col size={12} className="py-1">
+              <H5>Enemies</H5>
               <Row>
                 {editedMap?.config.bots.map((mapBot, mapBotIndex) => {
                   return (
@@ -126,10 +166,57 @@ const MapEditModal: React.FC<MapEditModalProps> = ({ gameMap, isOpen, onClose })
                 })}
                 <Col size={12}>
                   <Button intent="success" icon="plus" small onClick={() => {}}>
-                    Add bot
+                    Add an enemy 
                   </Button>
                 </Col>
               </Row>
+            </Col>
+            <Col size={12} className="py-1">
+              <H5>Missions</H5>
+                {editedMap?.config.tasks.map((task, taskIndex) => (
+                  <Row key={taskIndex} className="py-1">
+                    {TASK_FIELDS.map((field, fieldIndex) => {
+                      let disabled = false;
+                      if (field.disabledIf?.length) {
+                        field.disabledIf.forEach((disabledField) => {
+                          if (disabledField.is.includes((task as any)?.[disabledField.field])) {
+                            disabled = true;
+                          }
+                        })
+                      } else if (field.enabledIf?.length) {
+                        disabled = true;
+                        field.enabledIf.forEach((enabledField) => {
+                          if (enabledField.is.includes((task as any)?.[enabledField.field])) {
+                            disabled = false;
+                          }
+                        })
+                      }
+                      return (
+                        <Col key={fieldIndex} size={field.col}>
+                          {field.type === 'number' && (
+                            <NumericInput onValueChange={(value) => setTask(taskIndex, field.id, value)} disabled={disabled} {...field.props} fill value={(task as any)?.[field.id] || 0} />
+                          )}
+                          {field.type === 'select' && (
+                            <HTMLSelect onChange={(e) => setTask(taskIndex, field.id, e.target.value)} disabled={disabled} value={(task as any)?.[field.id] || ""} fill>
+                              {field.options.map((option) => {
+                                let optionIsDisabled = false;
+                                if (option.disabledIf) {
+                                  option.disabledIf.forEach(disabledOption => {
+                                    if (disabledOption.is.includes((task as any)?.[disabledOption.field])) {
+                                      optionIsDisabled = true;
+                                    }
+                                  });
+                                }
+                                return <option key={option.value} disabled={optionIsDisabled} value={option.value}>{option.label}</option>
+                              })}
+                            </HTMLSelect>
+                          )}
+                        </Col>
+                      );
+                    })}
+                  </Row>
+                ))}
+                <Button icon="plus" intent="success" small onClick={addTask}>Add task</Button>
             </Col>
           </Row>
         )}
@@ -137,7 +224,7 @@ const MapEditModal: React.FC<MapEditModalProps> = ({ gameMap, isOpen, onClose })
       <div className={Classes.DIALOG_FOOTER}>
         <div className={Classes.DIALOG_FOOTER_ACTIONS}>
           <Button onClick={onClose}>Close</Button>
-          <Button intent="primary" onClick={() => {}}>Apply changes</Button>
+          <Button intent="primary" onClick={onSave}>Apply changes</Button>
         </div>
       </div>
       <style>

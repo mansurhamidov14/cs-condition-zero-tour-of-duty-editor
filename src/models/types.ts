@@ -28,12 +28,12 @@ export interface ITemplateBase extends ITemplateOptions {
 }
 
 export interface ITemplate extends ITemplateBase {
-    applyChanges: (data: ITemplate | IPlayer) => void;
+    save: (data: ITemplate | IPlayer) => void;
 }
 
 export interface IPlayer extends ITemplateBase, ITemplateOptions {
     templates: string[];
-    applyChanges: (data: IPlayer | ITemplate) => void;
+    save: (data: IPlayer | ITemplate) => void;
     defaults?: IPlayerOptions;
 }
 
@@ -100,8 +100,8 @@ export interface IMap {
     name: string;
     config: IMapConfig;
     difficultyMode: IDifficultyModeState;
-    setConfig: (key: MapPrimitives, value: number) => void;
     parseTaskName: (task: MissionTask) => string;
+    save: (data: IMap) => void;
 }
 
 export type Entry<O, K extends keyof O> = [K, (O[K] | null)];
@@ -130,7 +130,7 @@ export type MissionTask = {
     action: string;
     withWeapon?: string | undefined;
     amount?: number;
-    option: null | 'survive' | 'inarow'
+    option: string | null;
 }
 
 export type DifficultyModePrimitives = keyof Omit<IDifficultyModeBase, 'CostAvailability'>

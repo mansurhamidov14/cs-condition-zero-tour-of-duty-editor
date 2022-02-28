@@ -10,7 +10,7 @@ export class Player extends Template implements IPlayer {
         this.templates = options.templates;
     }
 
-    applyChanges(data: IPlayer | ITemplate) {
+    save(data: IPlayer | ITemplate) {
         this.config = data.config;
         this.name = data.name;
         this.isNew = false;

@@ -1,4 +1,5 @@
-import { DifficultyModePrimitives, MapPrimitives } from "../../models/types";
+import { WEAPONS } from "../../consts";
+import { DifficultyModePrimitives, MapPrimitives, MissionTask } from "../../models/types";
 
 type DifficultyModePrimitiveFieldProps = {
     accessor: DifficultyModePrimitives;
@@ -32,3 +33,80 @@ export const mapPrimitiveFields: MapPrimitiveFieldProps[] = [
     },
     { accessor: 'FriendlyFire', label: 'Friendly fire', inputType: 'switch' }
 ];
+
+type FieldAvailability = {
+    field: keyof MissionTask;
+    is: string[];
+}
+
+type TaskFieldBase = {
+    id: keyof MissionTask;
+    disabledIf?: FieldAvailability[];
+    enabledIf?: FieldAvailability[];
+    col: number
+}
+
+interface TaskFieldNumeric extends TaskFieldBase {
+    type: 'number';
+    props: any;
+}
+
+interface TaskFieldSelect extends TaskFieldBase {
+    type: 'select';
+    options: { value: string, label: string, disabledIf?: FieldAvailability[] }[];
+}
+
+type TaskFields = (TaskFieldNumeric | TaskFieldSelect)[]
+
+export const TASK_FIELDS: TaskFields = [
+    {
+        id: 'action',
+        options: [
+            { value: 'injure', label: 'Injure' },
+            { value: 'injurewith', label: 'Injure with weapon' },
+            { value: 'kill', label: 'Kill' },
+            { value: 'killwith', label: 'Kill with weapon' },
+            { value: 'killall', label: 'All enemies to be eliminated' },
+            { value: 'killblind', label: 'Kill flashbang-blinded' },
+            { value: 'headshot', label: 'Kill with headshot' },
+            { value: 'headshotwith', label: 'Kill with headshot using weapon' },
+            { value: 'winfast', label: 'Win a round in less than (seconds)' },
+            { value: 'plant', label: 'Plant a bomb' },
+            { value: 'defuse', label: 'Defuse the bomb' },
+            { value: 'killdefuser', label: 'Kill bomb defuser' },
+            { value: 'rescue', label: 'Rescue hostages (count)' },
+            { value: 'rescueall', label: 'Rescue all hostages' },
+            { value: 'stoprescue', label: 'Kill enemy escorting a hostage' },
+            { value: 'hostagessurvive', label: 'All hostages to be survived' },
+            { value: 'killvip', label: 'Kill VIP' }
+        ],
+        disabledIf: [],
+        type: 'select',
+        col: 4,
+    },
+    {
+        id: 'amount',
+        type: 'number',
+        props: { min: 1 },
+        disabledIf: [{ field: 'action', is: ['killall', 'rescueall'] }],
+        col: 2
+    },
+    {
+        id: 'withWeapon',
+        type: 'select',
+        options: WEAPONS,
+        enabledIf: [{ field: 'action', is: ['injurewith', 'killwith', 'headshotwith']}],
+        col: 3,
+    },
+    {
+        id: 'option',
+        type: 'select',
+        options: [
+            { value: 'none', label: 'None' },
+            { value: 'survive', label: 'Survive round' },
+            { value: 'inarow', label: 'without dying', disabledIf: [{ field: 'action', is: ['winfast']}] }
+        ],
+        disabledIf: [{ field: 'action', is: ['killall', 'rescueall', 'hostagessurvive'] }],
+        col: 3
+    }
+]

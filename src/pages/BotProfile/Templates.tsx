@@ -12,7 +12,7 @@ export const Templates = () => {
   const [editedTemplate, setEditedTemplate] = React.useState<ITemplate | null>(null as any);
 
   const handleSubmit = React.useCallback((template) => {
-    editedTemplate?.applyChanges(template);
+    editedTemplate?.save(template);
     setEditedTemplate(null);
   }, [editedTemplate]);
 

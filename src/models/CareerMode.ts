@@ -1,6 +1,6 @@
 import { CAREER_MODE_STATE_UPDATE_EVENT, CAREER_MODE_UNMOUNT } from "../consts";
 import { DifficultyMode } from "./DifficultyMode";
-import { EDifficulty, ICareerMode } from "./types";
+import { EDifficulty, ICareerMode, IPlayer } from "./types";
 
 export class CareerMode implements ICareerMode {
     public easy: DifficultyMode;
@@ -9,7 +9,7 @@ export class CareerMode implements ICareerMode {
     public expert: DifficultyMode;
     public mounted: boolean = false;
 
-    constructor (vdfContents: Record<EDifficulty, string>) {
+    constructor (vdfContents: Record<EDifficulty, string>, public players: IPlayer[]) {
         this.easy = new DifficultyMode(vdfContents.easy, EDifficulty.EASY, this);
         this.normal = new DifficultyMode(vdfContents.normal, EDifficulty.NORMAL, this);
         this.hard = new DifficultyMode(vdfContents.hard, EDifficulty.HARD, this);

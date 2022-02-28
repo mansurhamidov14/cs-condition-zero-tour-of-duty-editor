@@ -70,8 +70,14 @@ export interface IDifficultyMode extends IDifficultyModeBase {
     Maps: Record<string, IMapOptions>
 }
 
+export type ITourCharacter = {
+    player: IPlayer;
+    isParticipating: boolean;
+    toggleParticipation: () => void;
+}
+
 export interface IDifficultyModeState extends IDifficultyModeBase {
-    Characters: string[];
+    Characters: ITourCharacter[];
     Maps: IMap[];
     difficulty: EDifficulty;
     careerMode: ICareerMode;
@@ -122,6 +128,7 @@ export type CareerModeDifficulties = Record<EDifficulty, IDifficultyModeState>;
 
 export interface ICareerMode extends CareerModeDifficulties {
     mounted: boolean;
+    players: IPlayer[]
     onMount: (ccallback: (careerMode: ICareerMode) => void) => void;
     updateState: () => void;
 }

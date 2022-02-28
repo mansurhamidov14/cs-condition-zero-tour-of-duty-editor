@@ -17,7 +17,7 @@ const MapEditModal: React.FC<MapEditModalProps> = ({ gameMap, isOpen, onClose })
   const { allPlayers } = useBotProfile();
 
   const enemies = React.useMemo(() => {
-    return allPlayers.filter((player) => !gameMap?.difficultyMode.Characters.includes(player.name))
+    return gameMap?.difficultyMode.Characters.filter(({ isParticipating }) => !isParticipating).map(({ player }) => player);
   }, [allPlayers, gameMap])
 
   React.useEffect(() => {
@@ -25,7 +25,6 @@ const MapEditModal: React.FC<MapEditModalProps> = ({ gameMap, isOpen, onClose })
       const { difficultyMode, ...rest  } = gameMap
       setEditedMap(JSON.parse(JSON.stringify(rest)));
     }
-    
   }, [gameMap]);
 
   const setMapName = React.useCallback((e: any) => {
@@ -153,7 +152,7 @@ const MapEditModal: React.FC<MapEditModalProps> = ({ gameMap, isOpen, onClose })
                     <Col key={mapBotIndex} size={4} className="py-1">
                       <ControlGroup fill>
                         <HTMLSelect fill value={mapBot} onChange={(e) => setBot(mapBotIndex, e.target.value)}>
-                          {enemies.map((player) => (
+                          {enemies?.map((player) => (
                             <option key={player.id} value={player.name}>{player.name}</option>
                           ))}
                         </HTMLSelect>

@@ -10,8 +10,8 @@ const App: React.FC = () => {
   const [selectedTab, setSelectedTab] = React.useState('botProfile');
 
   return (
-    <CareerModeProvider>
-      <BotProfileProvider>
+    <BotProfileProvider>
+      <CareerModeProvider>
         <div className="bp3-dark">
           <Container className="py-1">
             <Tabs large id="TabsExample" onChange={setSelectedTab as any} selectedTabId={selectedTab} animate>
@@ -21,8 +21,8 @@ const App: React.FC = () => {
           </Container>
         </div>
         <ConfirmationModal />
-      </BotProfileProvider>
-    </CareerModeProvider>
+      </CareerModeProvider>
+    </BotProfileProvider>
   )
 }
 

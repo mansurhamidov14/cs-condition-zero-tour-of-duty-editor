@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Card, Classes, H4, H5, Icon, Label, NumericInput, Tooltip } from "@blueprintjs/core";
+import { Button, ButtonGroup, Card, Checkbox, Classes, H4, H5, Icon, Label, NumericInput, Tooltip } from "@blueprintjs/core";
 import * as React from "react";
 import { Col, MapEditModal, Row } from "../../components";
 import { useDifficultyMode } from "../../contexts/GameModeProvider";
@@ -40,6 +40,18 @@ export const DifficultyMode: React.FC<IProps> = ({ difficulty }) => {
                   name={field.accessor}
                 />
               </Label>
+            </Col>
+          ))}
+        </Row>
+      </Col>
+      <Col size={12} className="py-2">
+        <H5>Teammates</H5>
+        <Row>
+          {mode.Characters.map((character) => (
+            <Col>
+              <Checkbox checked={character.isParticipating} onChange={() => character.toggleParticipation()}>
+                {character.player.name}
+              </Checkbox>
             </Col>
           ))}
         </Row>

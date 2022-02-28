@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { CareerMode } from '../../models/CareerMode';
 import type { EDifficulty, ICareerMode, IDifficultyModeState } from '../../models/types';
+import { BotProfileContext } from '../BotProfile';
 import { easyModeVdfExample, expertModeExample, hardModeVdfExample, normalModeVdfExample } from './mocks';
 
 const CareerModeContext = React.createContext(null as any);
 
 export class CareerModeProvider extends React.Component<{}, ICareerMode> {
   state = {} as any;
+  static contextType = BotProfileContext;
 
   componentDidMount() {
     const careerMode = new CareerMode({
@@ -14,7 +16,7 @@ export class CareerModeProvider extends React.Component<{}, ICareerMode> {
       normal: normalModeVdfExample,
       hard: hardModeVdfExample,
       expert: expertModeExample
-    });
+    }, this.context.allPlayers);
 
     (window as any).careerMode = careerMode;
 

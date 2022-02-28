@@ -1,4 +1,5 @@
 import * as VDF from "vdf-parser";
+import { Character } from "./Character";
 import { GameMap } from "./GameMap";
 import { EDifficulty, IDifficultyMode, IDifficultyModeState } from "./types";
 
@@ -6,7 +7,7 @@ export class DifficultyMode implements IDifficultyModeState {
     InitialPoints: number;
     MatchWins: number;
     MatchWinBy: number;
-    Characters: string[];
+    Characters: IDifficultyModeState['Characters'];
     Maps: IDifficultyModeState['Maps'];
     CostAvailability: IDifficultyModeState['CostAvailability'];
 
@@ -16,7 +17,10 @@ export class DifficultyMode implements IDifficultyModeState {
         this.MatchWins = vdfData.MatchWins;
         this.MatchWinBy = vdfData.MatchWinBy;
         this.CostAvailability = vdfData.CostAvailability;
-        this.Characters = vdfData.Characters.replaceAll('\t', ' ').split(' ').map(players => players.trim());
+        const characterNamesArray = vdfData.Characters.replaceAll('\t', ' ').split(' ').map(players => players.trim());
+        this.Characters = careerMode.players.map((player) => {
+            return new Character(player, characterNamesArray.includes(player.name), this);
+        }) 
         this.Maps = Object.entries(vdfData.Maps).map(([mapName, options]) => {
             return new GameMap(mapName, options, this);
         });

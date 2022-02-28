@@ -17,6 +17,10 @@ code {
   outline: none;
 }
 
+.pl-0 {
+  padding-left: 0;
+}
+
 .px-1 {
   padding-left: 12px;
   padding-right: 12px;
@@ -51,6 +55,10 @@ code {
   justify-content: space-between;
 }
 
+.flex-wrap-nowrap {
+  flex-wrap: nowrap;
+}
+
 .full-height {
   height: 100%;
 }
@@ -58,4 +66,3 @@ code {
 .text-right {
   text-align: right !important;
 }
-

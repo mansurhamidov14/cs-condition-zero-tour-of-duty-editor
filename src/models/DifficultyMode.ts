@@ -1,7 +1,7 @@
 import * as VDF from "vdf-parser";
 import { Character } from "./Character";
 import { GameMap } from "./GameMap";
-import { EDifficulty, IDifficultyMode, IDifficultyModeState } from "./types";
+import { EDifficulty, IDifficultyMode, IDifficultyModeState, MissionTask } from "./types";
 
 export class DifficultyMode implements IDifficultyModeState {
     InitialPoints: number;
@@ -34,5 +34,36 @@ export class DifficultyMode implements IDifficultyModeState {
     public setCostAvailabilty (cost: string, value: string) {
         this.CostAvailability[Number(cost)] = Number(value);
         this.careerMode.updateState();
+    }
+
+    public export() {
+        const outputMaps: IDifficultyMode['Maps'] = {};
+        this.Maps.forEach((gameMap) => {
+            const taskKeysOrder: (keyof MissionTask)[] = ['action', 'amount', 'withWeapon', 'option'];
+            const tasks = gameMap.config.tasks.map((task) => {
+                const taskOutput = taskKeysOrder.map((key) => task[key]).filter(Boolean).join(" ");
+                return `'${taskOutput}'`;
+            }).join(" ");
+            outputMaps[gameMap.name] = {
+                minEnemies: gameMap.config.minEnemies,
+                bots: gameMap.config.bots.join(" "),
+                threshold: gameMap.config.threshold,
+                tasks,
+                FriendlyFire: gameMap.config.FriendlyFire
+            }
+        })
+        const outputVDF: IDifficultyMode = {
+            InitialPoints: this.InitialPoints,
+            MatchWins: this.MatchWins,
+            MatchWinBy: this.MatchWinBy,
+            CostAvailability: this.CostAvailability,
+            Characters: this.Characters.filter(({ isParticipating }) => isParticipating).map(({ player }) => player.name).join(" "),
+            Maps: outputMaps
+        };
+
+        const fileContent = VDF.stringify({CareerGame: outputVDF}, true);
+
+        var file = new Blob([fileContent], { type: 'text/plain '});
+        return URL.createObjectURL(file);
     }
 }

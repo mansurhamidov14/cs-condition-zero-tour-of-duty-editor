@@ -173,7 +173,7 @@ const MapEditModal: React.FC<MapEditModalProps> = ({ gameMap, isOpen, onClose })
             <Col size={12} className="py-1">
               <H5>Missions</H5>
                 {editedMap?.config.tasks.map((task, taskIndex) => (
-                  <Row key={taskIndex} className="py-1">
+                  <Row key={taskIndex} className="py-1 flex-wrap-nowrap ">
                     {TASK_FIELDS.map((field, fieldIndex) => {
                       let disabled = false;
                       if (field.disabledIf?.length) {
@@ -213,6 +213,11 @@ const MapEditModal: React.FC<MapEditModalProps> = ({ gameMap, isOpen, onClose })
                         </Col>
                       );
                     })}
+                    {Boolean(taskIndex) && (
+                      <Col className="pl-0">
+                        <Button intent="danger" icon="minus" onClick={() => removeTask(taskIndex)} />
+                      </Col>
+                    )}
                   </Row>
                 ))}
                 <Button icon="plus" intent="success" small onClick={addTask}>Add task</Button>

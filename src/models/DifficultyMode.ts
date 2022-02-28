@@ -64,6 +64,6 @@ export class DifficultyMode implements IDifficultyModeState {
         const fileContent = VDF.stringify({CareerGame: outputVDF}, true);
 
         var file = new Blob([fileContent], { type: 'text/plain '});
-        return URL.createObjectURL(file);
+        return window.open(URL.createObjectURL(file), '_blank');
     }
 }

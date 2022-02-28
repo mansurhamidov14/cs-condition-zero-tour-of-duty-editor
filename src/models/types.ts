@@ -82,7 +82,8 @@ export interface IDifficultyModeState extends IDifficultyModeBase {
     difficulty: EDifficulty;
     careerMode: ICareerMode;
     set: (key: DifficultyModePrimitives, value: number) => void;
-    setCostAvailabilty: (cost: string, value: string) => void; 
+    setCostAvailabilty: (cost: string, value: string) => void;
+    export: () => any;
 }
 
 interface IMapConfigBase {

@@ -104,6 +104,9 @@ export const DifficultyMode: React.FC<IProps> = ({ difficulty }) => {
         </Row>  
       </Col>
       <MapEditModal isOpen={Boolean(editedMap)} onClose={() => setEditedMap(null)} gameMap={editedMap} />
+      <Col>
+        <Button intent="success" icon="floppy-disk" onClick={() => mode.export()}>Save</Button>
+      </Col>
     </Row>
   );
 };

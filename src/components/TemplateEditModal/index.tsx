@@ -18,7 +18,6 @@ import { Col, Row } from "..";
 import { FIELDS, DIFFICULTIES, WEAPONS_WITHOUT_GROUPS, REQUIRED_SKINS } from "../../consts";
 import { useBotProfile } from "../../contexts/BotProfile";
 import { capitalizeFirstLetter, nullishFilter } from "../../utils";
-import * as VDF from 'vdf-parser';
 
 type TemplateEditModalProps = {
   data: IPlayer | ITemplate | null;
@@ -84,7 +83,6 @@ const TemplateEditModal: React.FC<TemplateEditModalProps> = ({ data, isOpen, onC
     let newValue;
     if (wasDifficultySet) {
       newValue = editedTemplateData.config.Difficulty.filter((d) => d !== difficulty)
-      
     } else {
       const setDifficulties = [...(editedTemplateData.config.Difficulty || []), difficulty];
       newValue = DIFFICULTIES.filter(d => setDifficulties.includes(d));

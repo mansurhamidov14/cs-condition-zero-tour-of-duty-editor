@@ -2,25 +2,26 @@ import { Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
 import { ConfirmationModal, Container } from "./components";
 import { BotProfileProvider } from "./contexts/BotProfile";
-import { DefaultConfig } from "./partials/DefaultConfig";
-import { Players } from "./partials/Players";
-import { Templates } from "./partials/Templates";
+import { CareerModeProvider } from "./contexts/GameModeProvider";
+import { BotProfile } from "./pages/BotProfile";
+import { CareerMode } from "./pages/CareerMode";
 
 const App: React.FC = () => {
-  const [selectedTab, setSelectedTab] = React.useState('baseConfig');
+  const [selectedTab, setSelectedTab] = React.useState('botProfile');
 
   return (
     <BotProfileProvider>
-      <div className="bp3-dark">
-        <Container className="py-1">
-          <Tabs id="TabsExample" onChange={setSelectedTab as any} selectedTabId={selectedTab} animate>
-            <Tab id="baseConfig" title="Base configuration" panel={<DefaultConfig />} />
-            <Tab id="templates" title="Templates" panel={<Templates />} />
-            <Tab id="players" title="Players" panel={<Players />} />
-          </Tabs>
-        </Container>
-      </div>
-      <ConfirmationModal />
+      <CareerModeProvider>
+        <div className="bp3-dark">
+          <Container className="py-1">
+            <Tabs large id="TabsExample" onChange={setSelectedTab as any} selectedTabId={selectedTab} animate>
+              <Tab id="botProfile" title="Bot profile" panel={<BotProfile />} />
+              <Tab id="careerMode" title="Tour of Duty" panel={<CareerMode />} />
+            </Tabs>
+          </Container>
+        </div>
+        <ConfirmationModal />
+      </CareerModeProvider>
     </BotProfileProvider>
   )
 }

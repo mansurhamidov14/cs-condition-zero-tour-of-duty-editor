@@ -28,12 +28,12 @@ export interface ITemplateBase extends ITemplateOptions {
 }
 
 export interface ITemplate extends ITemplateBase {
-    applyChanges: (data: ITemplate | IPlayer) => void;
+    save: (data: ITemplate | IPlayer) => void;
 }
 
 export interface IPlayer extends ITemplateBase, ITemplateOptions {
     templates: string[];
-    applyChanges: (data: IPlayer | ITemplate) => void;
+    save: (data: IPlayer | ITemplate) => void;
     defaults?: IPlayerOptions;
 }
 
@@ -70,25 +70,76 @@ export interface IDifficultyMode extends IDifficultyModeBase {
     Maps: Record<string, IMapOptions>
 }
 
-export interface IDifficultyModeState extends IDifficultyModeBase {
-    Characters: string[];
-    Maps: IMap[];
+export type ITourCharacter = {
+    player: IPlayer;
+    isParticipating: boolean;
+    toggleParticipation: () => void;
 }
 
-interface IMapOptions {
-    bots: string;
+export interface IDifficultyModeState extends IDifficultyModeBase {
+    Characters: ITourCharacter[];
+    Maps: IMap[];
+    difficulty: EDifficulty;
+    careerMode: ICareerMode;
+    set: (key: DifficultyModePrimitives, value: number) => void;
+    setCostAvailabilty: (cost: string, value: string) => void;
+    export: () => any;
+}
+
+interface IMapConfigBase {
     minEnemies: number;
     threshold: number;
+    FriendlyFire: number;
+}
+
+export interface IMapOptions extends IMapConfigBase {
+    bots: string;
     tasks: string;
-    FriendlyFire: 0 | 1;
+}
+
+export interface IMapConfig extends IMapConfigBase {
+    bots: string[];
+    tasks: MissionTask[];
 }
 
 export interface IMap {
     id: string;
     name: string;
-    options: IMapOptions;
+    config: IMapConfig;
+    difficultyMode: IDifficultyModeState;
+    parseTaskName: (task: MissionTask) => string;
+    save: (data: IMap) => void;
 }
 
-export type Entry<O, K extends keyof O> = [K, (O[K] | null)]
-export type Entries<O> = Entry<O, keyof O>[]
+export type Entry<O, K extends keyof O> = [K, (O[K] | null)];
+export type Entries<O> = Entry<O, keyof O>[];
 
+export enum EDifficulty {
+    EASY = 'easy',
+    NORMAL = 'normal',
+    HARD = 'hard',
+    EXPERT = 'expert'
+}
+
+export type DifficultyModeUpdateEventDetails = {
+    difficulty: EDifficulty;
+}
+
+export type CareerModeDifficulties = Record<EDifficulty, IDifficultyModeState>;
+
+export interface ICareerMode extends CareerModeDifficulties {
+    mounted: boolean;
+    players: IPlayer[]
+    onMount: (ccallback: (careerMode: ICareerMode) => void) => void;
+    updateState: () => void;
+}
+
+export type MissionTask = {
+    action: string;
+    withWeapon?: string | undefined;
+    amount?: number;
+    option: string | null;
+}
+
+export type DifficultyModePrimitives = keyof Omit<IDifficultyModeBase, 'CostAvailability'>
+export type MapPrimitives = keyof IMapConfigBase;

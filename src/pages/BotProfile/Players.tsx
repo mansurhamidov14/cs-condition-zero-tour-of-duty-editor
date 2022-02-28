@@ -5,18 +5,18 @@ import {
   Card,
   H2,
 } from "@blueprintjs/core";
-import { Col, Row, TemplateEditModal } from "../components";
-import { useBotProfile } from '../contexts/BotProfile';
-import { capitalizeFirstLetter } from '../utils';
-import { confirmationService } from '../services';
-import type { IPlayer } from '../models/types';
+import { Col, Row, TemplateEditModal } from "../../components";
+import { useBotProfile } from '../../contexts/BotProfile';
+import { capitalizeFirstLetter } from '../../utils';
+import { confirmationService } from '../../services';
+import type { IPlayer } from '../../models/types';
 
 export const Players = () => {
   const { allPlayers: players, createPlayer, deletePlayer } = useBotProfile();
   const [editedPlayer, setEditedPlayer] = React.useState<IPlayer | null>(null as any);
 
   const handleSubmit = React.useCallback((player: IPlayer) => {
-    editedPlayer?.applyChanges(player);
+    editedPlayer?.save(player);
     setEditedPlayer(null);
   }, [editedPlayer]);
 

@@ -1,0 +1,16 @@
+.label-with-help {
+    height: 24px;
+    align-items: center;
+}
+
+.label-with-help > .col {
+    padding-right: 4px;
+}
+
+.label-with-help > .col:not(:first-child) {
+    padding-left: 4px;
+}
+
+.label-with-help .bp3-popover-wrapper {
+    margin-top: 0 !important;
+}

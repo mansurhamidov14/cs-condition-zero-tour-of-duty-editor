@@ -45,7 +45,7 @@ export const WEAPONS = [
     { value: 'shotgun', label: 'Shotgun', isWeaponGroup: true },
     { value: 'm3', label: 'Leone 12 Gauge Super' },
     { value: 'xm1014', label: 'Leone YG1265 Auto Shotgun' },
-    { value: 'machinegun', label: 'Sub-Machine Gun', isWeaponGroup: true },
+    { value: 'SMG', label: 'Sub-Machine Gun', isWeaponGroup: true },
     { value: 'tmp', label: 'Schmidt Machine Pistol' },
     { value: 'mac10', label: 'Ingram Mac-10' },
     { value: 'mp5', label: 'KM Sub-Machine Gun' },
@@ -86,3 +86,5 @@ export const WEAPONS_WITHOUT_GROUPS = WEAPONS.filter(({ isWeaponGroup }) => !isW
 export const BOT_PROFILE_STATE_UPDATE_EVENT = 'botProfileStateUpdate';
 export const BOT_PROFILE_UNMOUNT = 'botProfileUnmount';
 export const CONFIRMATION_REQUEST_EVENT = 'confirmationRequested';
+export const CAREER_MODE_STATE_UPDATE_EVENT = 'careerModeStateUpdate';
+export const CAREER_MODE_UNMOUNT = 'careerModeUnmount';

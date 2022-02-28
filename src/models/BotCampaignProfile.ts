@@ -209,7 +209,7 @@ export class BotCampaignProfile extends StateUpdater implements IBotProfile {
         return players;
     }
 
-    export() {
+    export = () => {
         const fields: (keyof IConfig)[] = ['Skill', 'Aggression', 'ReactionTime', 'AttackDelay', 'Teamwork', 'WeaponPreference', 'Cost', 'Difficulty', 'VoicePitch', 'Skin'];
         let fileContent = `Default\n`;
         fields.forEach(field =>  {
@@ -261,6 +261,6 @@ export class BotCampaignProfile extends StateUpdater implements IBotProfile {
         });
 
         var file = new Blob([fileContent], { type: 'text/plain '});
-        return URL.createObjectURL(file);
+        return window.open(URL.createObjectURL(file), '_blank');
     }
 }

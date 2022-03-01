@@ -84,7 +84,7 @@ export const DifficultyMode: React.FC<IProps> = ({ difficulty }) => {
             <Col key={gameMap.id} size={4} className="py-1">
               <Card className="full-height">
                 <H5>{gameMap.name}</H5>
-                <p><strong>Enemies:</strong>&nbsp;&nbsp;{gameMap.config.bots.map((bot) => bot).join(", ")}</p>
+                <p><strong>Enemies:</strong>&nbsp;&nbsp;{gameMap.config.bots.join(", ")}</p>
                 <p>
                   <strong>Tasks:</strong>&nbsp;&nbsp;
                   {gameMap.config.tasks.map((task, index) => (
@@ -96,7 +96,6 @@ export const DifficultyMode: React.FC<IProps> = ({ difficulty }) => {
                 </p>
                 <ButtonGroup>
                   <Button intent="success" icon="edit" onClick={() => setEditedMap(gameMap)}>Edit</Button>
-                  <Button intent="danger" icon="trash" onClick={() => {}}>Delete</Button>
                 </ButtonGroup>
               </Card>
             </Col>

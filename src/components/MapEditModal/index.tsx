@@ -38,7 +38,27 @@ const MapEditModal: React.FC<MapEditModalProps> = ({ gameMap, isOpen, onClose })
         ...state?.config,
         bots: [...(state as any).config.bots.slice(0, index), botName, ...(state as any).config.bots.slice(index + 1)]
       }
-    }))
+    }));
+  }, [editedMap]);
+
+  const addBot = React.useCallback(() => {
+    setEditedMap((state) => ({
+      ...state as any,
+      config: {
+        ...state?.config,
+        bots: [...(state as any).config.bots, enemies?.[0].name]
+      }
+    }));
+  }, [editedMap, enemies])
+
+  const removeBot = React.useCallback((index: number) => {
+    setEditedMap((state) => ({
+      ...state as any,
+      config: {
+        ...state?.config,
+        bots: [...(state as any).config.bots.slice(0, index), ...(state as any).config.bots.slice(index + 1)]
+      }
+    }));
   }, [editedMap]);
 
   const setConfig = React.useCallback((key: any, value: number) => {
@@ -157,14 +177,14 @@ const MapEditModal: React.FC<MapEditModalProps> = ({ gameMap, isOpen, onClose })
                           ))}
                         </HTMLSelect>
                         {mapBotIndex >= editedMap.config.minEnemies && (
-                          <Button onClick={() => {}} icon="minus" intent="danger" />
+                          <Button onClick={() => removeBot(mapBotIndex)} icon="minus" intent="danger" />
                         )}
                       </ControlGroup>
                     </Col>
                   )
                 })}
                 <Col size={12}>
-                  <Button intent="success" icon="plus" small onClick={() => {}}>
+                  <Button intent="success" icon="plus" small onClick={addBot}>
                     Add an enemy 
                   </Button>
                 </Col>

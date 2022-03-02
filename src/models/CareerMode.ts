@@ -9,11 +9,16 @@ export class CareerMode implements ICareerMode {
     public expert: DifficultyMode;
     public mounted: boolean = false;
 
-    constructor (vdfContents: Record<EDifficulty, string>, public players: IPlayer[]) {
-        this.easy = new DifficultyMode(vdfContents.easy, EDifficulty.EASY, this);
-        this.normal = new DifficultyMode(vdfContents.normal, EDifficulty.NORMAL, this);
-        this.hard = new DifficultyMode(vdfContents.hard, EDifficulty.HARD, this);
-        this.expert = new DifficultyMode(vdfContents.expert, EDifficulty.EXPERT, this);
+    constructor (public players: IPlayer[]) {
+        this.easy = new DifficultyMode('', EDifficulty.EASY, this);
+        this.normal = new DifficultyMode('', EDifficulty.NORMAL, this);
+        this.hard = new DifficultyMode('', EDifficulty.HARD, this);
+        this.expert = new DifficultyMode('', EDifficulty.EXPERT, this);
+    }
+
+    loadFromVdf (difficulty: EDifficulty, content: string) {
+        this[difficulty] = new DifficultyMode(content, difficulty, this);
+        this.updateState();
     }
 
     onMount(callback: (difficultyMode: ICareerMode) => void) {
@@ -36,5 +41,9 @@ export class CareerMode implements ICareerMode {
 
     updateState() {
         window.dispatchEvent(new CustomEvent(CAREER_MODE_STATE_UPDATE_EVENT));
+    }
+
+    hasUnsavedFile = (): boolean => {
+        return Object.values(EDifficulty).some((difficulty) => !this[difficulty].saved);
     }
 }

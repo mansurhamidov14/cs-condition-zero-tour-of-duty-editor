@@ -1,5 +1,11 @@
-export interface IBotProfile {
+interface Saveable {
+    filePath?: string;
+    saved: boolean;
+}
+
+export interface IBotProfile extends Saveable {
     allPlayers: IPlayer[];
+    filepath?: string;
     templates: ITemplate[];
     defaultConfig: IConfig;
     createPlayer: () => IPlayer;
@@ -76,7 +82,7 @@ export type ITourCharacter = {
     toggleParticipation: () => void;
 }
 
-export interface IDifficultyModeState extends IDifficultyModeBase {
+export interface IDifficultyModeState extends IDifficultyModeBase, Saveable {
     Characters: ITourCharacter[];
     Maps: IMap[];
     difficulty: EDifficulty;
@@ -84,6 +90,7 @@ export interface IDifficultyModeState extends IDifficultyModeBase {
     set: (key: DifficultyModePrimitives, value: number) => void;
     setCostAvailabilty: (cost: string, value: string) => void;
     export: () => any;
+    mounted: boolean;
 }
 
 interface IMapConfigBase {
@@ -129,9 +136,11 @@ export type CareerModeDifficulties = Record<EDifficulty, IDifficultyModeState>;
 
 export interface ICareerMode extends CareerModeDifficulties {
     mounted: boolean;
-    players: IPlayer[]
+    players: IPlayer[];
+    loadFromVdf: (difficulty: EDifficulty, content: string) => void;
     onMount: (ccallback: (careerMode: ICareerMode) => void) => void;
     updateState: () => void;
+    hasUnsavedFile: () => boolean;
 }
 
 export type MissionTask = {

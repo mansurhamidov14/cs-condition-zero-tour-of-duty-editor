@@ -1,4 +1,4 @@
-import { BOT_PROFILE_STATE_UPDATE_EVENT, BOT_PROFILE_UNMOUNT } from "../consts";
+import { BOT_PROFILE_INIT_EVENT, BOT_PROFILE_STATE_UPDATE_EVENT, BOT_PROFILE_UNMOUNT } from "../consts";
 import { Config } from "./Config";
 import { Player } from "./Player";
 import { StateUpdater } from "./StateUpdater";
@@ -10,6 +10,7 @@ export class BotCampaignProfile extends StateUpdater implements IBotProfile {
     defaultConfig: IConfig;
     templates: ITemplate[];
     allPlayers: IPlayer[];
+    saved: boolean = true;
 
     constructor (fileContent: string) {
         super();
@@ -32,11 +33,13 @@ export class BotCampaignProfile extends StateUpdater implements IBotProfile {
         }, this, false, true);
         this.allPlayers.push(newPlayer);
         this.updateState();
+        this.saved = false;
         return newPlayer;
     }
 
     deletePlayer = (playerId: string): void => {
         this.allPlayers = this.allPlayers.filter(({ id }) => id !== playerId);
+        this.saved = false;
         this.updateState();
     }
 
@@ -47,6 +50,7 @@ export class BotCampaignProfile extends StateUpdater implements IBotProfile {
                 player.templates = player.templates.filter((t) => t !== template.name)
             }
         });
+        this.saved = false;
         this.updateState();
     }
 
@@ -56,6 +60,7 @@ export class BotCampaignProfile extends StateUpdater implements IBotProfile {
             config: JSON.parse(JSON.stringify(this.defaultConfig))
         }, this, false, true);
         this.templates.push(newTemplate);
+        this.saved = false;
         this.updateState();
         return newTemplate;
     }
@@ -63,6 +68,9 @@ export class BotCampaignProfile extends StateUpdater implements IBotProfile {
     onMount(callback: (botProfile: IBotProfile) => void) {
         this.mounted = true;
         callback(this);
+        setTimeout(() => {
+            window.dispatchEvent(new CustomEvent(BOT_PROFILE_INIT_EVENT))
+        }, 500);
         const updateState = () => {
             callback(this);
         }

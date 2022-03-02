@@ -28,6 +28,7 @@ export class Template extends StateUpdater implements ITemplate {
             player.templates = player.templates.map(template => template === this.name ? data.name : template);
         });
         this.name = data.name;
+        this.botProfile.saved = false;
         this.isNew = false;
     }
 }

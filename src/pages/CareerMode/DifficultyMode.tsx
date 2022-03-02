@@ -13,7 +13,7 @@ export const DifficultyMode: React.FC<IProps> = ({ difficulty }) => {
   const mode = useDifficultyMode(difficulty);
   const [editedMap, setEditedMap] = React.useState<IMap | null>(null);
 
-  return (
+  return mode.mounted ? (
     <Row className="py-1">
       <Col size={12}>
         <H4>Primary config</H4>
@@ -49,7 +49,7 @@ export const DifficultyMode: React.FC<IProps> = ({ difficulty }) => {
         <Row>
           {mode.Characters.map((character) => (
             <Col>
-              <Checkbox checked={character.isParticipating} onChange={() => character.toggleParticipation()}>
+              <Checkbox key={character.player.id} checked={character.isParticipating} onChange={() => character.toggleParticipation()}>
                 {character.player.name}
               </Checkbox>
             </Col>
@@ -107,5 +107,5 @@ export const DifficultyMode: React.FC<IProps> = ({ difficulty }) => {
         <Button intent="success" icon="floppy-disk" onClick={() => mode.export()}>Save</Button>
       </Col>
     </Row>
-  );
+  ) : <div />;
 };

@@ -6,10 +6,16 @@ import reportWebVitals from './reportWebVitals';
 import '@blueprintjs/icons/lib/css/blueprint-icons.css';
 import '@blueprintjs/core/lib/css/blueprint.css';
 import './index.css';
+import { BotProfileProvider } from './contexts/BotProfile';
+import { CareerModeProvider } from './contexts/GameModeProvider';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <BotProfileProvider>
+      <CareerModeProvider>
+        <App />
+      </CareerModeProvider>
+    </BotProfileProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

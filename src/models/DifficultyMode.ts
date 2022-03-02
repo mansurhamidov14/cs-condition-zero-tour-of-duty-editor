@@ -4,35 +4,43 @@ import { GameMap } from "./GameMap";
 import { EDifficulty, IDifficultyMode, IDifficultyModeState, MissionTask } from "./types";
 
 export class DifficultyMode implements IDifficultyModeState {
-    InitialPoints: number;
-    MatchWins: number;
-    MatchWinBy: number;
-    Characters: IDifficultyModeState['Characters'];
-    Maps: IDifficultyModeState['Maps'];
-    CostAvailability: IDifficultyModeState['CostAvailability'];
+    InitialPoints: number = 0;
+    MatchWins: number = 0;
+    MatchWinBy: number = 0;
+    Characters: IDifficultyModeState['Characters'] = [];
+    Maps: IDifficultyModeState['Maps'] = [];
+    CostAvailability: IDifficultyModeState['CostAvailability'] = {};
+    mounted: boolean = false;
+    saved: boolean = true;
 
     constructor (fileContent: string, public difficulty: EDifficulty, public careerMode: IDifficultyModeState['careerMode']) {
-        const vdfData = ((VDF.parse(fileContent) as any).CareerGame) as IDifficultyMode;
-        this.InitialPoints = vdfData.InitialPoints;
-        this.MatchWins = vdfData.MatchWins;
-        this.MatchWinBy = vdfData.MatchWinBy;
-        this.CostAvailability = vdfData.CostAvailability;
-        const characterNamesArray = vdfData.Characters.replaceAll('\t', ' ').split(' ').map(players => players.trim());
-        this.Characters = careerMode.players.map((player) => {
-            return new Character(player, characterNamesArray.includes(player.name), this);
-        }) 
-        this.Maps = Object.entries(vdfData.Maps).map(([mapName, options]) => {
-            return new GameMap(mapName, options, this);
-        });
+        if (fileContent) {
+            const vdfData = ((VDF.parse(fileContent) as any).CareerGame) as IDifficultyMode;
+            console.log(vdfData);
+            this.InitialPoints = vdfData.InitialPoints;
+            this.MatchWins = vdfData.MatchWins;
+            this.MatchWinBy = vdfData.MatchWinBy;
+            this.CostAvailability = vdfData.CostAvailability;
+            const characterNamesArray = vdfData.Characters.replaceAll('\t', ' ').split(' ').map(players => players.trim());
+            this.Characters = careerMode.players.map((player) => {
+                return new Character(player, characterNamesArray.includes(player.name), this);
+            }) 
+            this.Maps = Object.entries(vdfData.Maps).map(([mapName, options]) => {
+                return new GameMap(mapName, options, this);
+            });
+            this.mounted = Boolean(fileContent.trim());
+        }
     }
 
     public set = (...[key, value]: Parameters<IDifficultyModeState['set']>): void => {
         this[key] = value;
+        this.saved = false;
         this.careerMode.updateState();
     }
 
     public setCostAvailabilty (cost: string, value: string) {
         this.CostAvailability[Number(cost)] = Number(value);
+        this.saved = false;
         this.careerMode.updateState();
     }
 

@@ -24,11 +24,13 @@ export const BotProfile: React.FC = () => {
 
   return (
     <>
-      <Tabs id="TabsExample" onChange={setSelectedTab as any} selectedTabId={selectedTab} vertical animate>
-        <Tab id="baseConfig" title="Base configuration" panel={<><DefaultConfig />{actions}</>} />
-        <Tab id="templates" title="Templates" panel={<><Templates />{actions}</>} />
-        <Tab id="players" title="Players" panel={<><Players />{actions}</>} />
-      </Tabs>
+      {botProfile.mounted && (
+        <Tabs id="TabsExample" onChange={setSelectedTab as any} selectedTabId={selectedTab} vertical animate>
+          <Tab id="baseConfig" title="Base configuration" panel={<><DefaultConfig />{actions}</>} />
+          <Tab id="templates" title="Templates" panel={<><Templates />{actions}</>} />
+          <Tab id="players" title="Players" panel={<><Players />{actions}</>} />
+        </Tabs>
+      )}
     </>
   )
 }

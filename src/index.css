@@ -15,7 +15,7 @@ code {
 }
 
 .scrollable-container {
-  height: calc(100vh - 48px);
+  height: calc(100vh - 16px);
   overflow-y: auto;
   margin-right: 12px;
 }
@@ -95,12 +95,4 @@ code {
 
 .text-right {
   text-align: right !important;
-}
-
-.unsaved-text {
-  color: #bf7326;
-}
-
-.unsaved-icon {
-  padding-bottom: 3px;
 }

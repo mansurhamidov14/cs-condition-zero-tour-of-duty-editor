@@ -6,7 +6,8 @@ const {
   dialog,
   BrowserWindow,
   nativeTheme,
-  Menu
+  Menu,
+  ipcMain
 } = require('electron');
 const isDev = require('electron-is-dev');
 const fs = require('fs');
@@ -59,6 +60,11 @@ const mainMenuTemplate = [
             click: () => openFile('CareerExpertMissions', ['vdf'])
           },
         ]
+      },
+      {
+        label: 'Save',
+        accelerator: 'Ctrl+S',
+        click: handleSaveFileClick
       }
     ]
   }
@@ -114,9 +120,9 @@ function openFile(name, extensions, itemsToEnable = []) {
       { name: 'All Files', extensions: ['*'] }
     ]
   }).then(({ filePaths }) => {
-    fs.readFile(filePaths[0], 'utf-8', (err, data) => {
-      if (data) {
-        win.webContents.send(`${name}:loaded`, data);
+    fs.readFile(filePaths[0], 'utf-8', (err, content) => {
+      if (content) {
+        win.webContents.send(`${name}:loaded`, {path: filePaths[0], content});
         itemsToEnable.forEach(function (item) {
           Menu.getApplicationMenu().getMenuItemById(item).enabled = true;
         })
@@ -124,5 +130,11 @@ function openFile(name, extensions, itemsToEnable = []) {
     });
   });
 }
+
+function handleSaveFileClick () {
+  win.webContents.send('saveFile');
+}
+
+ipcMain.on('saveFile', (e, data) => fs.writeFileSync(data.path, data.content));
 
 nativeTheme.themeSource = 'dark';

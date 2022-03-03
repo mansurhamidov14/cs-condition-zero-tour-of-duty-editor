@@ -3,7 +3,9 @@ import { Config } from "./Config";
 import { Player } from "./Player";
 import { StateUpdater } from "./StateUpdater";
 import { Template } from "./Template";
-import type { Entries, IBotProfile, IConfig, IPlayer, ITemplate } from "./types";
+import type { Entries, FileFromExplorer, IBotProfile, IConfig, IPlayer, ITemplate } from "./types";
+
+const { ipcRenderer } = window.require('electron');
 
 export class BotCampaignProfile extends StateUpdater implements IBotProfile {
     mounted = false;
@@ -11,10 +13,12 @@ export class BotCampaignProfile extends StateUpdater implements IBotProfile {
     templates: ITemplate[];
     allPlayers: IPlayer[];
     saved: boolean = true;
+    private filePath?: string;
 
-    constructor (fileContent: string) {
+    constructor (file: FileFromExplorer) {
         super();
-        const lines = fileContent.split('\n');
+        this.filePath = file.path;
+        const lines = file.content.split('\n');
         const sanitizedLines = lines.filter(line => {
             const trimmed = line.trim();
             return trimmed && trimmed.indexOf('//') !== 0;
@@ -149,10 +153,10 @@ export class BotCampaignProfile extends StateUpdater implements IBotProfile {
         });
         entries.push(['WeaponPreference', weaponPreference]);
         var config = Object.fromEntries(entries);
-        return new Config(config);
+        return new Config(config, this);
     }
     
-    getTemplates (lines: string[]) {
+    private getTemplates (lines: string[]) {
         let ignoreNextLine = true;
         const templates: ITemplate[] = [];
         let weaponPreference: Required<IConfig>['WeaponPreference'] = [];
@@ -188,7 +192,7 @@ export class BotCampaignProfile extends StateUpdater implements IBotProfile {
         return templates;
     }
     
-    getAllPlayers (lines: string[]) {
+    private getAllPlayers (lines: string[]) {
         var ignoreNextLine = true;
         const players: IPlayer[] = [];
         let weaponPreference: Required<IConfig>['WeaponPreference'] = [];
@@ -226,7 +230,7 @@ export class BotCampaignProfile extends StateUpdater implements IBotProfile {
         return players;
     }
 
-    export = () => {
+    save = () => {
         const fields: (keyof IConfig)[] = ['Skill', 'Aggression', 'ReactionTime', 'AttackDelay', 'Teamwork', 'WeaponPreference', 'Cost', 'Difficulty', 'VoicePitch', 'Skin'];
         let fileContent = `Default\n`;
         fields.forEach(field =>  {
@@ -277,7 +281,8 @@ export class BotCampaignProfile extends StateUpdater implements IBotProfile {
             fileContent += `End\n\n`;
         });
 
-        var file = new Blob([fileContent], { type: 'text/plain '});
-        return window.open(URL.createObjectURL(file), '_blank');
+        ipcRenderer.send('saveFile', { path: this.filePath, content: fileContent });
+        this.saved = true;
+        this.updateState();
     }
 }

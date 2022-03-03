@@ -1,7 +1,9 @@
 import * as VDF from "vdf-parser";
 import { Character } from "./Character";
 import { GameMap } from "./GameMap";
-import { EDifficulty, IDifficultyMode, IDifficultyModeState, MissionTask } from "./types";
+import { EDifficulty, FileFromExplorer, IDifficultyMode, IDifficultyModeState, MissionTask } from "./types";
+
+const { ipcRenderer } = window.require('electron');
 
 export class DifficultyMode implements IDifficultyModeState {
     InitialPoints: number = 0;
@@ -13,9 +15,15 @@ export class DifficultyMode implements IDifficultyModeState {
     mounted: boolean = false;
     saved: boolean = true;
 
-    constructor (fileContent: string, public difficulty: EDifficulty, public careerMode: IDifficultyModeState['careerMode']) {
-        if (fileContent) {
-            const vdfData = ((VDF.parse(fileContent) as any).CareerGame) as IDifficultyMode;
+    constructor (
+        file: FileFromExplorer,
+        public difficulty: EDifficulty,
+        public careerMode: IDifficultyModeState['careerMode'],
+        private filePath?: string
+    ) {
+        if (file.content) {
+            const vdfData = ((VDF.parse(file.content) as any).CareerGame) as IDifficultyMode;
+            this.filePath = file.path;
             this.InitialPoints = vdfData.InitialPoints;
             this.MatchWins = vdfData.MatchWins;
             this.MatchWinBy = vdfData.MatchWinBy;
@@ -27,7 +35,7 @@ export class DifficultyMode implements IDifficultyModeState {
             this.Maps = Object.entries(vdfData.Maps).map(([mapName, options]) => {
                 return new GameMap(mapName, options, this);
             });
-            this.mounted = Boolean(fileContent.trim());
+            this.mounted = Boolean(file.content.trim());
         }
     }
 
@@ -43,7 +51,7 @@ export class DifficultyMode implements IDifficultyModeState {
         this.careerMode.updateState();
     }
 
-    public export() {
+    public save = () => {
         const outputMaps: IDifficultyMode['Maps'] = {};
         this.Maps.forEach((gameMap) => {
             const taskKeysOrder: (keyof MissionTask)[] = ['action', 'amount', 'withWeapon', 'option'];
@@ -70,7 +78,8 @@ export class DifficultyMode implements IDifficultyModeState {
 
         const fileContent = VDF.stringify({CareerGame: outputVDF}, true);
 
-        var file = new Blob([fileContent], { type: 'text/plain '});
-        return window.open(URL.createObjectURL(file), '_blank');
+        ipcRenderer.send('saveFile', { path: this.filePath, content: fileContent });
+        this.saved = true;
+        this.careerMode.updateState();
     }
 }

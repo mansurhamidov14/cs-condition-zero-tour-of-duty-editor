@@ -30,5 +30,6 @@ export class Template extends StateUpdater implements ITemplate {
         this.name = data.name;
         this.botProfile.saved = false;
         this.isNew = false;
+        this.updateState();
     }
 }

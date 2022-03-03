@@ -16,5 +16,6 @@ export class Player extends Template implements IPlayer {
         this.isNew = false;
         this.templates = (data as any).templates;
         this.botProfile.saved = false;
+        this.updateState()
     }
 }

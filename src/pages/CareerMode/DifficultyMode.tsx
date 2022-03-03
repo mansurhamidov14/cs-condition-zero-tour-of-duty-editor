@@ -2,6 +2,7 @@ import { Button, ButtonGroup, Card, Checkbox, Classes, H4, H5, Icon, Label, Nume
 import * as React from "react";
 import { Col, MapEditModal, Row } from "../../components";
 import { useDifficultyMode } from "../../contexts/GameModeProvider";
+import { useFileSave } from "../../hooks";
 import { EDifficulty, IMap } from "../../models/types";
 import { difficultyModePrimitiveFields } from "./consts";
 
@@ -12,6 +13,7 @@ interface IProps {
 export const DifficultyMode: React.FC<IProps> = ({ difficulty }) => {
   const mode = useDifficultyMode(difficulty);
   const [editedMap, setEditedMap] = React.useState<IMap | null>(null);
+  useFileSave(() => mode.save(), [mode]);
 
   return mode.mounted ? (
     <Row className="py-1">
@@ -48,7 +50,7 @@ export const DifficultyMode: React.FC<IProps> = ({ difficulty }) => {
         <H5>Teammates</H5>
         <Row>
           {mode.Characters.map((character) => (
-            <Col>
+            <Col key={character.player.id}>
               <Checkbox key={character.player.id} checked={character.isParticipating} onChange={() => character.toggleParticipation()}>
                 {character.player.name}
               </Checkbox>
@@ -103,9 +105,6 @@ export const DifficultyMode: React.FC<IProps> = ({ difficulty }) => {
         </Row>  
       </Col>
       <MapEditModal isOpen={Boolean(editedMap)} onClose={() => setEditedMap(null)} gameMap={editedMap} />
-      <Col>
-        <Button intent="success" icon="floppy-disk" onClick={() => mode.export()}>Save</Button>
-      </Col>
     </Row>
   ) : <div />;
 };

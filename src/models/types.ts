@@ -1,6 +1,6 @@
 interface Saveable {
-    filePath?: string;
     saved: boolean;
+    save: () => void;
 }
 
 export interface IBotProfile extends Saveable {
@@ -12,7 +12,6 @@ export interface IBotProfile extends Saveable {
     createTemplate: () => ITemplate;
     deletePlayer: (player: IPlayer) => void;
     deleteTemplate: (template: ITemplate) => void;
-    export: () => any;
     onMount: (callback: (botProfile: IBotProfile) => void) => void;
     onDeletePlayer: (callback: (player: IPlayer) => void) => void;
     unmount: () => void;
@@ -90,7 +89,6 @@ export interface IDifficultyModeState extends IDifficultyModeBase, Saveable {
     careerMode: ICareerMode;
     set: (key: DifficultyModePrimitives, value: number) => void;
     setCostAvailabilty: (cost: string, value: string) => void;
-    export: () => any;
     mounted: boolean;
 }
 
@@ -138,7 +136,7 @@ export type CareerModeDifficulties = Record<EDifficulty, IDifficultyModeState>;
 export interface ICareerMode extends CareerModeDifficulties {
     mounted: boolean;
     players: IPlayer[];
-    loadFromVdf: (difficulty: EDifficulty, content: string) => void;
+    loadFromVdf: (difficulty: EDifficulty, file: FileFromExplorer, path: string) => void;
     handlePlayerDelete: (player: IPlayer) => void;
     onMount: (ccallback: (careerMode: ICareerMode) => void) => void;
     updateState: () => void;
@@ -154,3 +152,8 @@ export type MissionTask = {
 
 export type DifficultyModePrimitives = keyof Omit<IDifficultyModeBase, 'CostAvailability'>
 export type MapPrimitives = keyof IMapConfigBase;
+
+export type FileFromExplorer = {
+    content: string;
+    path?: string;
+}

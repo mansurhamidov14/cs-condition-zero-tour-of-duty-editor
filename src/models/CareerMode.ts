@@ -1,6 +1,6 @@
 import { CAREER_MODE_STATE_UPDATE_EVENT, CAREER_MODE_UNMOUNT } from "../consts";
 import { DifficultyMode } from "./DifficultyMode";
-import { EDifficulty, ICareerMode, IPlayer } from "./types";
+import { EDifficulty, FileFromExplorer, ICareerMode, IPlayer } from "./types";
 
 export class CareerMode implements ICareerMode {
     public easy: DifficultyMode;
@@ -10,10 +10,10 @@ export class CareerMode implements ICareerMode {
     public mounted: boolean = false;
 
     constructor (public players: IPlayer[]) {
-        this.easy = new DifficultyMode('', EDifficulty.EASY, this);
-        this.normal = new DifficultyMode('', EDifficulty.NORMAL, this);
-        this.hard = new DifficultyMode('', EDifficulty.HARD, this);
-        this.expert = new DifficultyMode('', EDifficulty.EXPERT, this);
+        this.easy = new DifficultyMode({ content: ''}, EDifficulty.EASY, this);
+        this.normal = new DifficultyMode({ content: ''}, EDifficulty.NORMAL, this);
+        this.hard = new DifficultyMode({ content: ''}, EDifficulty.HARD, this);
+        this.expert = new DifficultyMode({ content: ''}, EDifficulty.EXPERT, this);
     }
 
     handlePlayerDelete (player: IPlayer): void {
@@ -27,8 +27,8 @@ export class CareerMode implements ICareerMode {
         });
     }
 
-    loadFromVdf (difficulty: EDifficulty, content: string) {
-        this[difficulty] = new DifficultyMode(content, difficulty, this);
+    loadFromVdf (difficulty: EDifficulty, file: FileFromExplorer, path: string) {
+        this[difficulty] = new DifficultyMode(file, difficulty, this, path);
         this.updateState();
     }
 

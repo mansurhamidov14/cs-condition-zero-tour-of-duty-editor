@@ -18,8 +18,8 @@ export class CareerModeProvider extends React.Component<{}, ICareerMode> {
       const careerMode = new CareerMode(this.context.allPlayers);
 
       Object.values(EDifficulty).forEach((difficulty) => {
-        ipcRenderer.on(`Career${capitalizeFirstLetter(difficulty)}Missions:loaded`, (_: any, fileContent: string) => {
-          careerMode.loadFromVdf(difficulty, fileContent);
+        ipcRenderer.on(`Career${capitalizeFirstLetter(difficulty)}Missions:loaded`, (_: any, file: { content: string, path: string; }) => {
+          careerMode.loadFromVdf(difficulty, file, file.path);
         });
       });
   

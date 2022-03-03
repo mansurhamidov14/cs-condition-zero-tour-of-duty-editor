@@ -1,5 +1,5 @@
 import { StateUpdater } from "./StateUpdater";
-import type { Entry, IConfig, IConfigOptions } from "./types";
+import type { Entry, IBotProfile, IConfig, IConfigOptions } from "./types";
 
 export class Config extends StateUpdater implements IConfig {
     Skill!: string;
@@ -14,7 +14,7 @@ export class Config extends StateUpdater implements IConfig {
     defaults: IConfig['defaults'];
     Difficulty!: string[];
 
-    constructor(config: IConfigOptions) {
+    constructor(config: IConfigOptions, private botProfile: IBotProfile) {
         super();
         this.defaults = JSON.parse(JSON.stringify(config));
         Object.assign(this, config);
@@ -22,6 +22,7 @@ export class Config extends StateUpdater implements IConfig {
 
     public set(...[key, value]: Entry<IConfigOptions, keyof IConfigOptions>) {
         this[key] = value as any;
+        this.botProfile.saved = false;
         this.updateState();
     }
 
@@ -31,12 +32,14 @@ export class Config extends StateUpdater implements IConfig {
         } else {
             this.WeaponPreference = [weapon];
         }
+        this.botProfile.saved = false;
         this.updateState();
     }
 
     public editWeaponPreference(weaponIndex: number, value: string) {
         if (this.hasWeaponPreference()) {
             this.WeaponPreference[weaponIndex] = value;
+            this.botProfile.saved = false;
             this.updateState();
         } else {
             throw new Error('Player does not have any weapon preference');

@@ -1,12 +1,12 @@
 import { CAREER_MODE_STATE_UPDATE_EVENT, CAREER_MODE_UNMOUNT } from "../consts";
 import { DifficultyMode } from "./DifficultyMode";
-import { EDifficulty, FileFromExplorer, ICareerMode, IPlayer } from "./types";
+import { EDifficulty, FileFromExplorer, ICareerMode, IDifficultyModeState, IPlayer } from "./types";
 
 export class CareerMode implements ICareerMode {
-    public easy: DifficultyMode;
-    public normal: DifficultyMode;
-    public hard: DifficultyMode;
-    public expert: DifficultyMode;
+    public easy: IDifficultyModeState;
+    public normal: IDifficultyModeState;
+    public hard: IDifficultyModeState;
+    public expert: IDifficultyModeState;
     public mounted: boolean = false;
 
     constructor (public players: IPlayer[]) {

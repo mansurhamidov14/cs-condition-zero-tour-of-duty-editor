@@ -64,7 +64,12 @@ const mainMenuTemplate = [
       {
         label: 'Save',
         accelerator: 'Ctrl+S',
-        click: handleSaveFileClick
+        click: () => sendEvent('saveFile')
+      },
+      {
+        label: 'Save as',
+        accelerator: 'Ctrl+Alt+S',
+        click: () => sendEvent('saveFileAs')
       }
     ]
   }
@@ -72,7 +77,7 @@ const mainMenuTemplate = [
 
 if (isDev) {
   mainMenuTemplate.push({
-    label: 'Open dev tools',
+    label: 'Toggle dev tools',
     click: (item, window) => {
       window.toggleDevTools({ mode: 'detach' });
     }
@@ -119,22 +124,38 @@ function openFile(name, extensions, itemsToEnable = []) {
       { name: name, extensions: extensions },
       { name: 'All Files', extensions: ['*'] }
     ]
-  }).then(({ filePaths }) => {
-    fs.readFile(filePaths[0], 'utf-8', (err, content) => {
-      if (content) {
-        win.webContents.send(`${name}:loaded`, {path: filePaths[0], content});
-        itemsToEnable.forEach(function (item) {
-          Menu.getApplicationMenu().getMenuItemById(item).enabled = true;
-        })
-      }
-    });
+  }).then(({ canceled, filePaths }) => {
+    if (!canceled) {
+      fs.readFile(filePaths[0], 'utf-8', (err, content) => {
+        if (content) {
+          win.webContents.send(`${name}:loaded`, {path: filePaths[0], content});
+          itemsToEnable.forEach(function (item) {
+            Menu.getApplicationMenu().getMenuItemById(item).enabled = true;
+          })
+        }
+      });
+    }
   });
 }
 
-function handleSaveFileClick () {
-  win.webContents.send('saveFile');
+function sendEvent (event) {
+  win.webContents.send(event);
 }
 
 ipcMain.on('saveFile', (e, data) => fs.writeFileSync(data.path, data.content));
+ipcMain.on('saveFileAs', (e, data) => {
+  dialog.showSaveDialog(win, {
+    filters: [{
+      name: data.name, extensions: [data.extension]
+    }]
+  }).then(({ canceled, filePath }) => {
+    if (!canceled) {
+      fs.writeFileSync(filePath, data.content);
+      win.webContents.send('saveFileAsResponse', filePath);
+    } else {
+      win.webContents.send('saveFileAsResponse');
+    }
+  });
+});
 
 nativeTheme.themeSource = 'dark';

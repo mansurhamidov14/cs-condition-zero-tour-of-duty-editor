@@ -230,7 +230,7 @@ export class BotCampaignProfile extends StateUpdater implements IBotProfile {
         return players;
     }
 
-    save = () => {
+    private getSavedFileContent = () => {
         const fields: (keyof IConfig)[] = ['Skill', 'Aggression', 'ReactionTime', 'AttackDelay', 'Teamwork', 'WeaponPreference', 'Cost', 'Difficulty', 'VoicePitch', 'Skin'];
         let fileContent = `Default\n`;
         fields.forEach(field =>  {
@@ -281,8 +281,28 @@ export class BotCampaignProfile extends StateUpdater implements IBotProfile {
             fileContent += `End\n\n`;
         });
 
-        ipcRenderer.send('saveFile', { path: this.filePath, content: fileContent });
-        this.saved = true;
-        this.updateState();
+        return fileContent;
+    }
+
+    save = () => {
+        if (this.filePath) {
+            ipcRenderer.send('saveFile', { path: this.filePath, content: this.getSavedFileContent() });
+            this.saved = true;
+            this.updateState();
+        } else {
+            this.saveAs();
+        }
+    }
+
+    saveAs = () => {
+        ipcRenderer.send('saveFileAs', { content: this.getSavedFileContent(), extension: 'db', name: 'BotCampaignProfile' }); 
+        ipcRenderer.on('saveFileAsResponse', (_: any, path: string) => {
+            if (path) {
+                this.filePath = path;
+                this.saved = true;
+                this.updateState();
+            }
+            ipcRenderer.removeAllListeners('saveFileAsResponse');
+        });
     }
 }

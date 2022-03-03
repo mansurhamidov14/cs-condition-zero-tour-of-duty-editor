@@ -11,3 +11,12 @@ export function useFileSave(callback: () => void, dependencies: any[] = []) {
         }
     }, dependencies);
 };
+
+export function useFileSaveAs(callback: () => void, dependencies: any[] = []) {
+    React.useEffect(() => {
+        ipcRenderer.on('saveFileAs', callback);
+        return () => {
+            ipcRenderer.removeListener('saveFileAs', callback);
+        }
+    });
+}

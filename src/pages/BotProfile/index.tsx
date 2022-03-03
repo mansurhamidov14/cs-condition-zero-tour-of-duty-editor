@@ -1,7 +1,7 @@
 import { Tab, Tabs } from "@blueprintjs/core";
 import * as React from "react";
 import { useBotProfile } from "../../contexts/BotProfile";
-import { useFileSave } from "../../hooks";
+import { useFileSave, useFileSaveAs } from "../../hooks";
 import { DefaultConfig } from "./DefaultConfig";
 import { Players } from "./Players";
 import { Templates } from "./Templates";
@@ -10,6 +10,7 @@ export const BotProfile: React.FC = () => {
   const [selectedTab, setSelectedTab] = React.useState('baseConfig');
   const botProfile = useBotProfile();
   useFileSave(() => botProfile.save(), [botProfile]);
+  useFileSaveAs(() => botProfile.saveAs(), [botProfile]);
 
   return (
     <>

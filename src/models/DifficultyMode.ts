@@ -1,4 +1,5 @@
 import * as VDF from "vdf-parser";
+import { capitalizeFirstLetter } from "../utils";
 import { Character } from "./Character";
 import { GameMap } from "./GameMap";
 import { EDifficulty, FileFromExplorer, IDifficultyMode, IDifficultyModeState, MissionTask } from "./types";
@@ -51,7 +52,7 @@ export class DifficultyMode implements IDifficultyModeState {
         this.careerMode.updateState();
     }
 
-    public save = () => {
+    private getSavedFileContent = () => {
         const outputMaps: IDifficultyMode['Maps'] = {};
         this.Maps.forEach((gameMap) => {
             const taskKeysOrder: (keyof MissionTask)[] = ['action', 'amount', 'withWeapon', 'option'];
@@ -76,10 +77,32 @@ export class DifficultyMode implements IDifficultyModeState {
             Maps: outputMaps
         };
 
-        const fileContent = VDF.stringify({CareerGame: outputVDF}, true);
+        return VDF.stringify({CareerGame: outputVDF}, true);
+    }
 
-        ipcRenderer.send('saveFile', { path: this.filePath, content: fileContent });
-        this.saved = true;
-        this.careerMode.updateState();
+    public save = () => {
+        if (this.filePath) {
+            ipcRenderer.send('saveFile', { path: this.filePath, content: this.getSavedFileContent() });
+            this.saved = true;
+            this.careerMode.updateState();
+        } else {
+            this.saveAs();
+        }
+    }
+
+    public saveAs = () => {
+        ipcRenderer.send('saveFileAs', {
+            content: this.getSavedFileContent(),
+            extension: 'vdf',
+            name: `Career${capitalizeFirstLetter(this.difficulty)}Missions`
+        });
+        ipcRenderer.on('saveFileAsResponse', (_: any, path: string) => {
+            if (path) {
+                this.filePath = path;
+                this.saved = true;
+                this.careerMode.updateState();
+            }
+            ipcRenderer.removeAllListeners('saveFileAsResponse');
+        });
     }
 }

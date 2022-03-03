@@ -2,7 +2,7 @@ import { Button, ButtonGroup, Card, Checkbox, Classes, H4, H5, Icon, Label, Nume
 import * as React from "react";
 import { Col, MapEditModal, Row } from "../../components";
 import { useDifficultyMode } from "../../contexts/GameModeProvider";
-import { useFileSave } from "../../hooks";
+import { useFileSave, useFileSaveAs } from "../../hooks";
 import { EDifficulty, IMap } from "../../models/types";
 import { difficultyModePrimitiveFields } from "./consts";
 
@@ -14,6 +14,7 @@ export const DifficultyMode: React.FC<IProps> = ({ difficulty }) => {
   const mode = useDifficultyMode(difficulty);
   const [editedMap, setEditedMap] = React.useState<IMap | null>(null);
   useFileSave(() => mode.save(), [mode]);
+  useFileSaveAs(() => mode.saveAs(), [mode]);
 
   return mode.mounted ? (
     <Row className="py-1">

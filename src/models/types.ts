@@ -1,6 +1,7 @@
 interface Saveable {
     saved: boolean;
     save: () => void;
+    saveAs: () => void;
 }
 
 export interface IBotProfile extends Saveable {

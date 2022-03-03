@@ -89,3 +89,4 @@ export const BOT_PROFILE_UNMOUNT = 'botProfileUnmount';
 export const CONFIRMATION_REQUEST_EVENT = 'confirmationRequested';
 export const CAREER_MODE_STATE_UPDATE_EVENT = 'careerModeStateUpdate';
 export const CAREER_MODE_UNMOUNT = 'careerModeUnmount';
+export const PLAYER_DELETED_EVENT = 'playerDeleted';

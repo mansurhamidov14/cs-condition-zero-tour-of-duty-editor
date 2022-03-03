@@ -1,4 +1,4 @@
-import { Colors, Icon, Tab, Tabs, Text } from '@blueprintjs/core';
+import { Icon, Tab, Tabs } from '@blueprintjs/core';
 import * as React from 'react';
 import { Col, Row } from '../../components';
 import { useCareerMode } from '../../contexts/GameModeProvider';
@@ -24,7 +24,9 @@ export const CareerMode: React.FC = () => {
               title={
                 <Row className="align-items-center justify-content-between">
                   <Col className="pt-text pt-intent-success">
-                    <span className={saved ? undefined : "unsaved-text"}>{capitalizeFirstLetter(difficulty) + ' missions'}</span>
+                    <span className={saved ? undefined : "unsaved-text"}>
+                      {capitalizeFirstLetter(difficulty) + ' missions'}
+                    </span>
                   </Col>
                   <Col>
                     <Icon
@@ -38,7 +40,7 @@ export const CareerMode: React.FC = () => {
               }
               panel={<DifficultyMode difficulty={difficulty} />}
             />
-            )
+          );
         })}
       </Tabs>
     ) : <div/>;

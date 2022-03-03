@@ -1,4 +1,4 @@
-import { BOT_PROFILE_INIT_EVENT, BOT_PROFILE_STATE_UPDATE_EVENT, BOT_PROFILE_UNMOUNT } from "../consts";
+import { BOT_PROFILE_INIT_EVENT, BOT_PROFILE_STATE_UPDATE_EVENT, BOT_PROFILE_UNMOUNT, PLAYER_DELETED_EVENT } from "../consts";
 import { Config } from "./Config";
 import { Player } from "./Player";
 import { StateUpdater } from "./StateUpdater";
@@ -37,10 +37,19 @@ export class BotCampaignProfile extends StateUpdater implements IBotProfile {
         return newPlayer;
     }
 
-    deletePlayer = (playerId: string): void => {
-        this.allPlayers = this.allPlayers.filter(({ id }) => id !== playerId);
+    deletePlayer = (player: IPlayer): void => {
+        this.allPlayers = this.allPlayers.filter(({ id }) => id !== player.id);
         this.saved = false;
+        window.dispatchEvent(new CustomEvent<IPlayer>(PLAYER_DELETED_EVENT, { detail: player}));
         this.updateState();
+    }
+
+    onDeletePlayer(callback: (player: IPlayer) => void) {
+        window.addEventListener(PLAYER_DELETED_EVENT, ({ detail }:  CustomEventInit<IPlayer>) => {
+            if (detail) {
+                callback(detail);
+            }
+        })
     }
 
     deleteTemplate = (template: ITemplate): void => {
@@ -69,7 +78,7 @@ export class BotCampaignProfile extends StateUpdater implements IBotProfile {
         this.mounted = true;
         callback(this);
         setTimeout(() => {
-            window.dispatchEvent(new CustomEvent(BOT_PROFILE_INIT_EVENT))
+            window.dispatchEvent(new CustomEvent<IBotProfile>(BOT_PROFILE_INIT_EVENT, { detail: this }))
         }, 500);
         const updateState = () => {
             callback(this);

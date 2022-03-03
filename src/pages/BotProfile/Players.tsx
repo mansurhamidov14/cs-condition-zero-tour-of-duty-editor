@@ -23,10 +23,10 @@ export const Players = () => {
   const handleDeleteClick = React.useCallback((player: IPlayer) => {
     confirmationService.requestConfirmation({
       title: 'Are you sure?',
-      body: `Player '${player.name}' will be removed`,
+      body: `Player '${player.name}' will be deleted everywhere.`,
       confirmButton: { label: 'Yes, delete' },
-      onConfirm: () => deletePlayer(player.id)
-    })
+      onConfirm: () => deletePlayer(player)
+    });
   }, [deletePlayer]);
 
   const handlePlayerCreate = React.useCallback(() => {
@@ -36,7 +36,7 @@ export const Players = () => {
 
   const handleClose = React.useCallback(() => {
     if (editedPlayer?.isNew) {
-      deletePlayer(editedPlayer.id);
+      deletePlayer(editedPlayer);
     }
     setEditedPlayer(null);
   }, [deletePlayer, editedPlayer]);

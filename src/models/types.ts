@@ -10,10 +10,11 @@ export interface IBotProfile extends Saveable {
     defaultConfig: IConfig;
     createPlayer: () => IPlayer;
     createTemplate: () => ITemplate;
-    deletePlayer: (playerId: string) => void;
+    deletePlayer: (player: IPlayer) => void;
     deleteTemplate: (template: ITemplate) => void;
     export: () => any;
     onMount: (callback: (botProfile: IBotProfile) => void) => void;
+    onDeletePlayer: (callback: (player: IPlayer) => void) => void;
     unmount: () => void;
 }
 
@@ -138,6 +139,7 @@ export interface ICareerMode extends CareerModeDifficulties {
     mounted: boolean;
     players: IPlayer[];
     loadFromVdf: (difficulty: EDifficulty, content: string) => void;
+    handlePlayerDelete: (player: IPlayer) => void;
     onMount: (ccallback: (careerMode: ICareerMode) => void) => void;
     updateState: () => void;
     hasUnsavedFile: () => boolean;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BOT_PROFILE_INIT_EVENT } from '../../consts';
 import { CareerMode } from '../../models/CareerMode';
-import { EDifficulty, ICareerMode, IDifficultyModeState } from '../../models/types';
+import { EDifficulty, IBotProfile, ICareerMode, IDifficultyModeState } from '../../models/types';
 import { capitalizeFirstLetter } from '../../utils';
 import { BotProfileContext } from '../BotProfile';
 
@@ -14,7 +14,7 @@ export class CareerModeProvider extends React.Component<{}, ICareerMode> {
   static contextType = BotProfileContext;
 
   componentDidMount() {
-    window.addEventListener(BOT_PROFILE_INIT_EVENT, () => {
+    window.addEventListener(BOT_PROFILE_INIT_EVENT, ({ detail: botProfile }: CustomEventInit<IBotProfile>) => {
       const careerMode = new CareerMode(this.context.allPlayers);
 
       Object.values(EDifficulty).forEach((difficulty) => {
@@ -24,7 +24,8 @@ export class CareerModeProvider extends React.Component<{}, ICareerMode> {
       });
   
       (window as any).careerMode = careerMode;
-  
+
+      botProfile?.onDeletePlayer((player) => careerMode.handlePlayerDelete(player));
       careerMode.onMount(updated => this.setState(updated));
     });
   }

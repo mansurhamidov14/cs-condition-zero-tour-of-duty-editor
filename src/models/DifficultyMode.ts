@@ -16,7 +16,6 @@ export class DifficultyMode implements IDifficultyModeState {
     constructor (fileContent: string, public difficulty: EDifficulty, public careerMode: IDifficultyModeState['careerMode']) {
         if (fileContent) {
             const vdfData = ((VDF.parse(fileContent) as any).CareerGame) as IDifficultyMode;
-            console.log(vdfData);
             this.InitialPoints = vdfData.InitialPoints;
             this.MatchWins = vdfData.MatchWins;
             this.MatchWinBy = vdfData.MatchWinBy;

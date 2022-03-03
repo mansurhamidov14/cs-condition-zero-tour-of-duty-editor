@@ -16,6 +16,17 @@ export class CareerMode implements ICareerMode {
         this.expert = new DifficultyMode('', EDifficulty.EXPERT, this);
     }
 
+    handlePlayerDelete (player: IPlayer): void {
+        Object.values(EDifficulty).forEach((difficulty) => {
+            this[difficulty].Characters = this[difficulty].Characters.filter((character) => {
+                return character.player.id !== player.id;
+            });
+            this[difficulty].Maps.forEach((gameMap) => {
+                gameMap.config.bots = gameMap.config.bots.filter(bot => bot !== player.name);
+            });
+        });
+    }
+
     loadFromVdf (difficulty: EDifficulty, content: string) {
         this[difficulty] = new DifficultyMode(content, difficulty, this);
         this.updateState();

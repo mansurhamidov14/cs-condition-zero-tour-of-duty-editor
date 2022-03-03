@@ -12,17 +12,3 @@ export const uuidv4 = (str?: string): string | boolean => {
 
 export const nullishFilter = (value: any) => value != null;
 export const capitalizeFirstLetter = (str: string) => str[0].toUpperCase() + str.slice(1).toLowerCase();
-
-export const readFileContent = (path: string, callback: (fileContent: string) => void) => {
-    const rawFile = new XMLHttpRequest();
-    rawFile.open("GET", path, false);
-    rawFile.onreadystatechange = () => {
-        if(rawFile.readyState === 4)  {
-            if(rawFile.status === 200 || rawFile.status == 0) {
-                const fileContent = rawFile.responseText;
-                callback(fileContent);
-            }
-        }
-    }
-    rawFile.send(null);
-}

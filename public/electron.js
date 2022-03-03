@@ -5,7 +5,6 @@ const {
   app,
   dialog,
   BrowserWindow,
-  ipcMain,
   nativeTheme,
   Menu
 } = require('electron');
@@ -126,7 +125,4 @@ function openFile(name, extensions, itemsToEnable = []) {
   });
 }
 
-ipcMain.on('close', () => app.quit());
-ipcMain.on('minimize', () => win.minimize());
-ipcMain.on('maximize', () => win.isMaximized() ? win.unmaximize() : win.maximize());
 nativeTheme.themeSource = 'dark';

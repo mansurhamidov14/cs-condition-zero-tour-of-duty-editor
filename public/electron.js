@@ -1,5 +1,7 @@
 const path = require('path');
-require('electron-reloader')(module);
+try {
+  require('electron-reloader')(module)
+} catch (_) {}
 
 const {
   app,

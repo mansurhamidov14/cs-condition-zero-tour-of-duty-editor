@@ -11,7 +11,6 @@ const App: React.FC = () => {
   const [selectedTab, setSelectedTab] = React.useState('botProfile');
   const { mounted: loadedBotProfile, saved: botProfileSaved } = useBotProfile();
   const careerMode = useCareerMode();
-
   return (
     <>
       <div className="bp3-dark">

@@ -38,7 +38,7 @@ export class BotCampaignProfile implements IBotProfile {
             templates:  [this.templates?.[0].name].filter(Boolean),
             config: { ...this.defaultConfig, WeaponPreference: [...this.defaultConfig.WeaponPreference] }
         }, this, false, true);
-        this.allPlayers.push(newPlayer);
+        this.allPlayers = [...this.allPlayers, newPlayer];
         return newPlayer;
     }
 
@@ -71,7 +71,7 @@ export class BotCampaignProfile implements IBotProfile {
             name: `Template#${this.templates.length + 1}`,
             config: { ...this.defaultConfig, WeaponPreference: [...this.defaultConfig.WeaponPreference] }
         }, this, false, true);
-        this.templates.push(newTemplate);
+        this.templates = [...this.templates, newTemplate];
         return newTemplate;
     }
 

@@ -1,5 +1,7 @@
 import { IConfigOptions } from "./models/types";
 
+export const IS_DEV = false;
+
 type Field = |
     {
         type: 'slider';

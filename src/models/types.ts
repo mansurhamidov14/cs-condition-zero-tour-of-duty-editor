@@ -4,7 +4,11 @@ interface Saveable {
     saveAs: () => void;
 }
 
-export interface IBotProfile extends Saveable {
+interface IStateUpdater {
+    updateState: (save?: boolean) => void;
+}
+
+export interface IBotProfile extends Saveable, IStateUpdater {
     allPlayers: IPlayer[];
     filepath?: string;
     templates: ITemplate[];
@@ -83,7 +87,7 @@ export type ITourCharacter = {
     toggleParticipation: () => void;
 }
 
-export interface IDifficultyModeState extends IDifficultyModeBase, Saveable {
+export interface IDifficultyModeState extends IDifficultyModeBase, Saveable, IStateUpdater {
     Characters: ITourCharacter[];
     Maps: IMap[];
     difficulty: EDifficulty;

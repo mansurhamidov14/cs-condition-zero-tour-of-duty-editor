@@ -40,16 +40,19 @@ export class DifficultyMode implements IDifficultyModeState {
         }
     }
 
+    updateState(save: boolean = false) {
+        this.saved = save;
+        this.careerMode.updateState();
+    }
+
     public set = (...[key, value]: Parameters<IDifficultyModeState['set']>): void => {
         this[key] = value;
-        this.saved = false;
-        this.careerMode.updateState();
+        this.updateState();
     }
 
     public setCostAvailabilty (cost: string, value: string) {
         this.CostAvailability[Number(cost)] = Number(value);
-        this.saved = false;
-        this.careerMode.updateState();
+        this.updateState();
     }
 
     private getSavedFileContent = () => {
@@ -83,8 +86,7 @@ export class DifficultyMode implements IDifficultyModeState {
     public save = () => {
         if (this.filePath) {
             ipcRenderer.send('saveFile', { path: this.filePath, content: this.getSavedFileContent() });
-            this.saved = true;
-            this.careerMode.updateState();
+            this.updateState(true);
         } else {
             this.saveAs();
         }
@@ -99,8 +101,7 @@ export class DifficultyMode implements IDifficultyModeState {
         ipcRenderer.on('saveFileAsResponse', (_: any, path: string) => {
             if (path) {
                 this.filePath = path;
-                this.saved = true;
-                this.careerMode.updateState();
+                this.updateState(true);
             }
             ipcRenderer.removeAllListeners('saveFileAsResponse');
         });

@@ -1,13 +1,12 @@
 import { BOT_PROFILE_INIT_EVENT, BOT_PROFILE_STATE_UPDATE_EVENT, BOT_PROFILE_UNMOUNT, PLAYER_DELETED_EVENT } from "../consts";
 import { Config } from "./Config";
 import { Player } from "./Player";
-import { StateUpdater } from "./StateUpdater";
 import { Template } from "./Template";
 import type { Entries, FileFromExplorer, IBotProfile, IConfig, IPlayer, ITemplate } from "./types";
 
 const { ipcRenderer } = window.require('electron');
 
-export class BotCampaignProfile extends StateUpdater implements IBotProfile {
+export class BotCampaignProfile implements IBotProfile {
     mounted = false;
     defaultConfig: IConfig;
     templates: ITemplate[];
@@ -16,7 +15,6 @@ export class BotCampaignProfile extends StateUpdater implements IBotProfile {
     private filePath?: string;
 
     constructor (file: FileFromExplorer) {
-        super();
         this.filePath = file.path;
         const lines = file.content.split('\n');
         const sanitizedLines = lines.filter(line => {
@@ -28,24 +26,26 @@ export class BotCampaignProfile extends StateUpdater implements IBotProfile {
         this.allPlayers = this.getAllPlayers(sanitizedLines);
         (window as any).botProfile = this;
     }
+    
+    updateState(save: boolean = false): void {
+        this.saved = save;
+        window.dispatchEvent(new CustomEvent(BOT_PROFILE_STATE_UPDATE_EVENT));
+    }
 
     createPlayer = (): IPlayer => {
         const newPlayer = new Player({
             name: `Player#${this.allPlayers.length + 1}`,
             templates:  [this.templates?.[0].name].filter(Boolean),
-            config: JSON.parse(JSON.stringify(this.defaultConfig))
+            config: { ...this.defaultConfig, WeaponPreference: [...this.defaultConfig.WeaponPreference] }
         }, this, false, true);
         this.allPlayers.push(newPlayer);
-        this.updateState();
-        this.saved = false;
         return newPlayer;
     }
 
     deletePlayer = (player: IPlayer): void => {
         this.allPlayers = this.allPlayers.filter(({ id }) => id !== player.id);
-        this.saved = false;
         window.dispatchEvent(new CustomEvent<IPlayer>(PLAYER_DELETED_EVENT, { detail: player}));
-        this.updateState();
+        if (!player.isNew) this.updateState();
     }
 
     onDeletePlayer(callback: (player: IPlayer) => void) {
@@ -63,18 +63,15 @@ export class BotCampaignProfile extends StateUpdater implements IBotProfile {
                 player.templates = player.templates.filter((t) => t !== template.name)
             }
         });
-        this.saved = false;
-        this.updateState();
+        if (!template.isNew) this.updateState();
     }
 
     createTemplate = (): ITemplate => {
         const newTemplate = new Template({
             name: `Template#${this.templates.length + 1}`,
-            config: JSON.parse(JSON.stringify(this.defaultConfig))
+            config: { ...this.defaultConfig, WeaponPreference: [...this.defaultConfig.WeaponPreference] }
         }, this, false, true);
         this.templates.push(newTemplate);
-        this.saved = false;
-        this.updateState();
         return newTemplate;
     }
 
@@ -287,8 +284,7 @@ export class BotCampaignProfile extends StateUpdater implements IBotProfile {
     save = () => {
         if (this.filePath) {
             ipcRenderer.send('saveFile', { path: this.filePath, content: this.getSavedFileContent() });
-            this.saved = true;
-            this.updateState();
+            this.updateState(true);
         } else {
             this.saveAs();
         }
@@ -299,8 +295,7 @@ export class BotCampaignProfile extends StateUpdater implements IBotProfile {
         ipcRenderer.on('saveFileAsResponse', (_: any, path: string) => {
             if (path) {
                 this.filePath = path;
-                this.saved = true;
-                this.updateState();
+                this.updateState(true);
             }
             ipcRenderer.removeAllListeners('saveFileAsResponse');
         });

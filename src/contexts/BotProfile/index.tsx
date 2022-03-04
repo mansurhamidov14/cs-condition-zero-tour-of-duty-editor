@@ -2,6 +2,7 @@ import * as React from "react";
 import { FileFromExplorer, IBotProfile } from "../../models/types";
 import { BotCampaignProfile } from "../../models/BotCampaignProfile";
 import { botProfileExample } from "./mocks";
+import { IS_DEV } from "../../consts";
 
 const { ipcRenderer } = window.require('electron');
 
@@ -11,7 +12,7 @@ export class BotProfileProvider extends React.Component<{}, IBotProfile> {
   state = { mounted: false } as any;
 
   componentDidMount () {
-    if (process.env.NODE_ENV === 'development') {
+    if (IS_DEV) {
       const botCampaignProfile = new BotCampaignProfile({ content: botProfileExample });
       botCampaignProfile.onMount((state) => this.setState(state));
     } else {

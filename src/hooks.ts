@@ -20,3 +20,20 @@ export function useFileSaveAs(callback: () => void, dependencies: any[] = []) {
         }
     });
 }
+
+export function useSearch<T>(
+    list: T[],
+    searchFields: (keyof T)[]
+): [T[], string, React.Dispatch<React.SetStateAction<string>>] {
+    const [searchText, setSearchText] = React.useState('');
+
+    const searchResult = React.useMemo(() => {
+        return list.filter((item) => (
+            searchFields.some((f) => (
+                (item[f] as any).toLowerCase?.().includes(searchText.toLowerCase()))
+            )
+        ));
+    }, [searchText, list]);
+
+    return [searchResult, searchText, setSearchText];
+}

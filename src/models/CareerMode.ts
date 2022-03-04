@@ -1,4 +1,5 @@
 import { CAREER_MODE_STATE_UPDATE_EVENT, CAREER_MODE_UNMOUNT } from "../consts";
+import { easyModeVdfExample, expertModeExample, hardModeVdfExample, normalModeVdfExample } from "../contexts/GameModeProvider/mocks";
 import { DifficultyMode } from "./DifficultyMode";
 import { EDifficulty, FileFromExplorer, ICareerMode, IDifficultyModeState, IPlayer } from "./types";
 
@@ -10,10 +11,10 @@ export class CareerMode implements ICareerMode {
     public mounted: boolean = false;
 
     constructor (public players: IPlayer[]) {
-        this.easy = new DifficultyMode({ content: ''}, EDifficulty.EASY, this);
-        this.normal = new DifficultyMode({ content: ''}, EDifficulty.NORMAL, this);
-        this.hard = new DifficultyMode({ content: ''}, EDifficulty.HARD, this);
-        this.expert = new DifficultyMode({ content: ''}, EDifficulty.EXPERT, this);
+        this.easy = new DifficultyMode({ content: process.env.NODE_ENV === 'development' ? easyModeVdfExample : ''}, EDifficulty.EASY, this);
+        this.normal = new DifficultyMode({ content: process.env.NODE_ENV === 'development' ? normalModeVdfExample : ''}, EDifficulty.NORMAL, this);
+        this.hard = new DifficultyMode({ content: process.env.NODE_ENV === 'development' ? hardModeVdfExample : ''}, EDifficulty.HARD, this);
+        this.expert = new DifficultyMode({ content: process.env.NODE_ENV === 'development' ? expertModeExample : ''}, EDifficulty.EXPERT, this);
     }
 
     handlePlayerDelete (player: IPlayer): void {

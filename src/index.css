@@ -81,6 +81,10 @@ code {
   justify-content: space-between;
 }
 
+.justify-content-end {
+  justify-content: flex-end;
+}
+
 .align-items-center {
   align-items: center;
 }
@@ -95,4 +99,8 @@ code {
 
 .text-right {
   text-align: right !important;
+}
+
+.bp3-tab-panel {
+  width: 100%;
 }

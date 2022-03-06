@@ -1,8 +1,20 @@
-import { BOT_PROFILE_INIT_EVENT, BOT_PROFILE_STATE_UPDATE_EVENT, BOT_PROFILE_UNMOUNT, PLAYER_DELETED_EVENT } from "../consts";
+import {
+    BOT_PROFILE_INIT_EVENT,
+    BOT_PROFILE_STATE_UPDATE_EVENT,
+    BOT_PROFILE_UNMOUNT,
+    PLAYER_DELETED_EVENT
+} from "../consts";
 import { Config } from "./Config";
 import { Player } from "./Player";
 import { Template } from "./Template";
-import type { Entries, FileFromExplorer, IBotProfile, IConfig, IPlayer, ITemplate } from "./types";
+import type {
+    Entries,
+    FileFromExplorer,
+    IBotProfile,
+    IConfig,
+    IPlayer,
+    ITemplate
+} from "./types";
 
 const { ipcRenderer } = window.require('electron');
 

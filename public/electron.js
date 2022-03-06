@@ -26,11 +26,13 @@ const mainMenuTemplate = [
           {
             label: 'Bot profile',
             accelerator: 'Ctrl+Shift+B',
-            click: () => openFile('BotProfile', ['db'], [
+            click: () => openFile('BotCampaignProfile', ['db'], [
               'easy-missions',
               'normal-missions',
               'hard-missions',
-              'expert-missions'
+              'expert-missions',
+              'save',
+              'save-as'
             ])
           },
           {
@@ -64,11 +66,15 @@ const mainMenuTemplate = [
         ]
       },
       {
+        id: "save",
+        enabled: false,
         label: 'Save',
         accelerator: 'Ctrl+S',
         click: () => sendEvent('saveFile')
       },
       {
+        id: "save-as",
+        enabled: false,
         label: 'Save as',
         accelerator: 'Ctrl+Alt+S',
         click: () => sendEvent('saveFileAs')
@@ -83,7 +89,7 @@ if (isDev) {
     click: (item, window) => {
       window.toggleDevTools({ mode: 'detach' });
     }
-  })
+  });
 }
 
 const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
@@ -93,6 +99,7 @@ function createWindow() {
   win = new BrowserWindow({
     width: 1280,
     height: 720,
+    icon: __dirname + '/favicon.ico',
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,

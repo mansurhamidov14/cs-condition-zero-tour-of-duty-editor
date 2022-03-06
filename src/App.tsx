@@ -4,11 +4,12 @@ import { ConfirmationModal, Container } from "./components";
 import TabTitle from "./components/TabTitle";
 import { useBotProfile } from "./contexts/BotProfile";
 import { useCareerMode } from "./contexts/GameModeProvider";
+import { useTabs } from "./contexts/Tabs";
 import { BotProfile } from "./pages/BotProfile";
 import { CareerMode } from "./pages/CareerMode";
 
 const App: React.FC = () => {
-  const [selectedTab, setSelectedTab] = React.useState('botProfile');
+  const { tabs, setRootTab } = useTabs();
   const { mounted: loadedBotProfile, saved: botProfileSaved } = useBotProfile();
   const careerMode = useCareerMode();
   return (
@@ -16,16 +17,16 @@ const App: React.FC = () => {
       <div className="bp3-dark">
         <div className="scrollable-container">
           <Container>
-            <Tabs large onChange={setSelectedTab as any} selectedTabId={selectedTab} renderActiveTabPanelOnly animate>
+            <Tabs id="root-tab" large onChange={setRootTab} selectedTabId={tabs.rootTab.activeTab} renderActiveTabPanelOnly animate>
               <Tab
                 id="botProfile"
-                disabled={!loadedBotProfile}
+                disabled={tabs.botProfile.disabled}
                 title={<TabTitle saved={!loadedBotProfile || botProfileSaved} title="Bot profile" />}
                 panel={<BotProfile />}
               />
               <Tab
                 id="careerMode"
-                disabled={!careerMode.mounted}
+                disabled={tabs.careerMode.disabled}
                 title={<TabTitle title="Tour of Duty" saved={!careerMode.hasUnsavedFile?.()} />}
                 panel={<CareerMode />}
               />

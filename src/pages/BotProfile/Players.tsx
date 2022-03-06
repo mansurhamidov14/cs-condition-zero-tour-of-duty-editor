@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 import {
   Button,
   ButtonGroup,
@@ -7,11 +7,11 @@ import {
   InputGroup,
 } from "@blueprintjs/core";
 import { Col, Row, TemplateEditModal } from "../../components";
-import { useBotProfile } from '../../contexts/BotProfile';
-import { capitalizeFirstLetter } from '../../utils';
-import { confirmationService } from '../../services';
-import type { IPlayer } from '../../models/types';
-import { useSearch } from '../../hooks';
+import { useBotProfile } from "../../contexts/BotProfile";
+import { capitalizeFirstLetter } from "../../utils";
+import { confirmationService } from "../../services";
+import type { IPlayer } from "../../models/types";
+import { useSearch } from "../../hooks";
 
 export const Players = () => {
   const { allPlayers: players, createPlayer, deletePlayer } = useBotProfile();

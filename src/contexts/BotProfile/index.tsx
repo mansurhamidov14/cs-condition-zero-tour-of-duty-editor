@@ -16,7 +16,7 @@ export class BotProfileProvider extends React.Component<{}, IBotProfile> {
       const botCampaignProfile = new BotCampaignProfile({ content: botProfileExample });
       botCampaignProfile.onMount((state) => this.setState(state));
     } else {
-      ipcRenderer.on('BotProfile:loaded', (_: any, file: FileFromExplorer) => {
+      ipcRenderer.on('BotCampaignProfile:loaded', (_: any, file: FileFromExplorer) => {
         const botCampaignProfile = new BotCampaignProfile(file);
         botCampaignProfile.onMount((state) => this.setState(state));
       });

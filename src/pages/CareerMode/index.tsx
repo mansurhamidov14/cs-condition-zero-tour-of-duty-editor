@@ -1,19 +1,20 @@
-import { Tab, Tabs } from '@blueprintjs/core';
-import * as React from 'react';
-import TabTitle from '../../components/TabTitle';
-import { useCareerMode } from '../../contexts/GameModeProvider';
-import { EDifficulty } from '../../models/types';
-import { capitalizeFirstLetter } from '../../utils';
-import { DifficultyMode } from './DifficultyMode';
+import { Tab, Tabs } from "@blueprintjs/core";
+import * as React from "react";
+import TabTitle from "../../components/TabTitle";
+import { useCareerMode } from "../../contexts/GameModeProvider";
+import { useTabs } from "../../contexts/Tabs";
+import { EDifficulty } from "../../models/types";
+import { capitalizeFirstLetter } from "../../utils";
+import { DifficultyMode } from "./DifficultyMode";
 
-import './styles.css';
+import "./styles.css";
 
 export const CareerMode: React.FC = () => {
-  const [selectedTab, setSelectedTab] = React.useState<EDifficulty>(EDifficulty.EASY);
+  const { tabs: { careerMode: { activeTab } }, setCareerModeTab } = useTabs();
   const careerMode = useCareerMode();
 
   return careerMode.mounted ? (
-      <Tabs onChange={setSelectedTab as any} renderActiveTabPanelOnly selectedTabId={selectedTab} animate vertical>
+      <Tabs id="career-mode" onChange={setCareerModeTab} renderActiveTabPanelOnly selectedTabId={activeTab} animate vertical>
         {Object.values(EDifficulty).map(difficulty => (
           <Tab
             disabled={!careerMode[difficulty].mounted}

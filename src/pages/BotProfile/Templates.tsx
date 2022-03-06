@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 import { Card, Button, ButtonGroup, H2, InputGroup } from "@blueprintjs/core";
 import { Col, Row, TemplateEditModal } from "../../components";
 import { useBotProfile } from "../../contexts/BotProfile";
@@ -6,7 +6,7 @@ import { WEAPONS_WITHOUT_GROUPS } from "../../consts";
 import { capitalizeFirstLetter } from "../../utils";
 import { confirmationService } from "../../services";
 import type { ITemplate } from "../../models/types";
-import { useSearch } from '../../hooks';
+import { useSearch } from "../../hooks";
 
 export const Templates = () => {
   const { templates, createTemplate, deleteTemplate } = useBotProfile();

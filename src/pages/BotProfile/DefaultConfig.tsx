@@ -1,8 +1,8 @@
-import * as React from 'react';
+import * as React from "react";
 import { Button, ControlGroup, H5, HTMLSelect, Label, NumericInput, Slider } from "@blueprintjs/core";
 import { FIELDS, WEAPONS } from "../../consts";
 import { Col, Row } from "../../components";
-import { useBotProfile } from '../../contexts/BotProfile';
+import { useBotProfile } from "../../contexts/BotProfile";
 
 export const DefaultConfig: React.FC = () => {
 	const { defaultConfig } = useBotProfile();

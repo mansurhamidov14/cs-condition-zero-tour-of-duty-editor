@@ -1,15 +1,24 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import App from "./App";
+import { BotProfileProvider } from "./contexts/BotProfile";
+import { CareerModeProvider } from "./contexts/GameModeProvider";
+import reportWebVitals from "./reportWebVitals";
 
-import '@blueprintjs/icons/lib/css/blueprint-icons.css';
-import '@blueprintjs/core/lib/css/blueprint.css';
-import './index.css';
+import "@blueprintjs/icons/lib/css/blueprint-icons.css";
+import "@blueprintjs/core/lib/css/blueprint.css";
+import "./index.css";
+import { TabsProvider } from "./contexts/Tabs";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <TabsProvider>
+      <BotProfileProvider>
+        <CareerModeProvider>
+          <App />
+        </CareerModeProvider>
+      </BotProfileProvider>
+    </TabsProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

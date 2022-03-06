@@ -1,13 +1,24 @@
-export interface IBotProfile {
+interface Saveable {
+    saved: boolean;
+    save: () => void;
+    saveAs: () => void;
+}
+
+interface IStateUpdater {
+    updateState: (save?: boolean) => void;
+}
+
+export interface IBotProfile extends Saveable, IStateUpdater {
     allPlayers: IPlayer[];
+    filepath?: string;
     templates: ITemplate[];
     defaultConfig: IConfig;
     createPlayer: () => IPlayer;
     createTemplate: () => ITemplate;
-    deletePlayer: (playerId: string) => void;
+    deletePlayer: (player: IPlayer) => void;
     deleteTemplate: (template: ITemplate) => void;
-    export: () => any;
     onMount: (callback: (botProfile: IBotProfile) => void) => void;
+    onDeletePlayer: (callback: (player: IPlayer) => void) => void;
     unmount: () => void;
 }
 
@@ -76,14 +87,14 @@ export type ITourCharacter = {
     toggleParticipation: () => void;
 }
 
-export interface IDifficultyModeState extends IDifficultyModeBase {
+export interface IDifficultyModeState extends IDifficultyModeBase, Saveable, IStateUpdater {
     Characters: ITourCharacter[];
     Maps: IMap[];
     difficulty: EDifficulty;
     careerMode: ICareerMode;
     set: (key: DifficultyModePrimitives, value: number) => void;
     setCostAvailabilty: (cost: string, value: string) => void;
-    export: () => any;
+    mounted: boolean;
 }
 
 interface IMapConfigBase {
@@ -129,9 +140,12 @@ export type CareerModeDifficulties = Record<EDifficulty, IDifficultyModeState>;
 
 export interface ICareerMode extends CareerModeDifficulties {
     mounted: boolean;
-    players: IPlayer[]
+    players: IPlayer[];
+    loadFromVdf: (difficulty: EDifficulty, file: FileFromExplorer, path: string) => void;
+    handlePlayerDelete: (player: IPlayer) => void;
     onMount: (ccallback: (careerMode: ICareerMode) => void) => void;
     updateState: () => void;
+    hasUnsavedFile: () => boolean;
 }
 
 export type MissionTask = {
@@ -143,3 +157,8 @@ export type MissionTask = {
 
 export type DifficultyModePrimitives = keyof Omit<IDifficultyModeBase, 'CostAvailability'>
 export type MapPrimitives = keyof IMapConfigBase;
+
+export type FileFromExplorer = {
+    content: string;
+    path?: string;
+}

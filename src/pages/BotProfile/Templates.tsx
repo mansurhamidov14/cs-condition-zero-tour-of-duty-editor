@@ -1,15 +1,17 @@
-import * as React from 'react';
-import { Card, Button, ButtonGroup, H2 } from "@blueprintjs/core";
+import * as React from "react";
+import { Card, Button, ButtonGroup, H2, InputGroup } from "@blueprintjs/core";
 import { Col, Row, TemplateEditModal } from "../../components";
 import { useBotProfile } from "../../contexts/BotProfile";
 import { WEAPONS_WITHOUT_GROUPS } from "../../consts";
 import { capitalizeFirstLetter } from "../../utils";
 import { confirmationService } from "../../services";
 import type { ITemplate } from "../../models/types";
+import { useSearch } from "../../hooks";
 
 export const Templates = () => {
   const { templates, createTemplate, deleteTemplate } = useBotProfile();
   const [editedTemplate, setEditedTemplate] = React.useState<ITemplate | null>(null as any);
+  const [filteredTemplates, searchText, setSearchText] = useSearch(templates, ['name']);
 
   const handleSubmit = React.useCallback((template) => {
     editedTemplate?.save(template);
@@ -39,8 +41,19 @@ export const Templates = () => {
 
   return (
     <div>
+      <Row className="justify-content-end">
+        <Col>
+          <InputGroup
+            large
+            leftIcon="search"
+            onChange={(e) => setSearchText(e.target.value)}
+            placeholder="Search template..."
+            value={searchText}
+          />
+        </Col>
+      </Row>
       <Row>
-        {templates.map(template => (
+        {filteredTemplates.map(template => (
           <Col key={template.id} size={4} className="py-1">
             <Card key={template.id}>
               <H2>{template.name}</H2>

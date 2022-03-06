@@ -1,5 +1,5 @@
-import * as React from 'react';
-import './styles.css';
+import * as React from "react";
+import "./styles.css";
 
 type IContainerProps = {
   className?: string;

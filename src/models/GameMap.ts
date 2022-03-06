@@ -1,7 +1,7 @@
 import { WEAPONS } from "../consts";
 import { TASK_FIELDS } from "../pages/CareerMode/consts";
 import { uuidv4 } from "../utils";
-import { IMap, IMapConfig, IMapOptions, MapPrimitives, MissionTask } from "./types";
+import { IMap, IMapConfig, IMapOptions, MissionTask } from "./types";
 
 export class GameMap implements IMap {
     id: string;
@@ -52,6 +52,7 @@ export class GameMap implements IMap {
             }))
         };
         this.name = _data.name;
+        this.difficultyMode.saved = false;
         this.difficultyMode.careerMode.updateState();
     }
 

@@ -65,11 +65,11 @@ export class DifficultyMode implements IDifficultyModeState {
             }).join(" ");
             outputMaps[gameMap.name] = {
                 minEnemies: gameMap.config.minEnemies,
-                bots: gameMap.config.bots.join(" "),
+                bots: gameMap.config.bots.map(bot => bot.name).join(" "),
                 threshold: gameMap.config.threshold,
                 tasks,
                 FriendlyFire: gameMap.config.FriendlyFire
-            }
+            };
         })
         const outputVDF: IDifficultyMode = {
             InitialPoints: this.InitialPoints,

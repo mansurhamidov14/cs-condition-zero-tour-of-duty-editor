@@ -5,7 +5,6 @@ export class Character implements ITourCharacter {
 
     toggleParticipation() {
         this.isParticipating = !this.isParticipating;
-        this.difficultyMode.saved = false;
-        this.difficultyMode.careerMode.updateState();
+        this.difficultyMode.updateState();
     }
 }

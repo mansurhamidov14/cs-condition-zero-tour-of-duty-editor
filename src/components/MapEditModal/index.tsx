@@ -1,8 +1,22 @@
-import { Button, Classes, ControlGroup, Dialog, H5, HTMLSelect, Icon, InputGroup, Label, NumericInput, Switch, Tooltip } from "@blueprintjs/core";
+import {
+  Button,
+  Classes,
+  ControlGroup,
+  Dialog,
+  H5,
+  HTMLSelect,
+  Icon,
+  InputGroup,
+  Label,
+  NumericInput,
+  Switch,
+  Tooltip
+} from "@blueprintjs/core";
+import { cloneDeep } from "lodash";
 import * as React from "react";
 import { Col, Row } from "..";
 import { useBotProfile } from "../../contexts/BotProfile";
-import { IMap, MissionTask } from "../../models/types";
+import { IMap, IPlayer, MissionTask } from "../../models/types";
 import { mapPrimitiveFields, TASK_FIELDS } from "../../pages/CareerMode/consts";
 import { capitalizeFirstLetter } from "../../utils";
 
@@ -22,8 +36,7 @@ const MapEditModal: React.FC<MapEditModalProps> = ({ gameMap, isOpen, onClose })
 
   React.useEffect(() => {
     if (gameMap) {
-      const { difficultyMode, ...rest  } = gameMap
-      setEditedMap(JSON.parse(JSON.stringify(rest)));
+      setEditedMap(cloneDeep(gameMap));
     }
   }, [gameMap]);
 
@@ -31,12 +44,13 @@ const MapEditModal: React.FC<MapEditModalProps> = ({ gameMap, isOpen, onClose })
     setEditedMap(state => ({ ...state as any, name: e.target.value }));
   }, [editedMap]);
 
-  const setBot = React.useCallback((index: number, botName: string) => {
+  const setBot = React.useCallback((index: number, playerId: string) => {
+    const player = enemies?.find(enemy => enemy.id === playerId) as IPlayer;
     setEditedMap((state) => ({
       ...state as any,
       config: {
         ...state?.config,
-        bots: [...(state as any).config.bots.slice(0, index), botName, ...(state as any).config.bots.slice(index + 1)]
+        bots: [...(state as any).config.bots.slice(0, index), player, ...(state as any).config.bots.slice(index + 1)]
       }
     }));
   }, [editedMap]);
@@ -153,6 +167,7 @@ const MapEditModal: React.FC<MapEditModalProps> = ({ gameMap, isOpen, onClose })
                       ) : (
                         <div style={{ paddingTop: '10px'}}>
                           <Switch
+                            checked={Boolean(Number(editedMap?.config.FriendlyFire))}
                             onChange={() => setConfig(field.accessor, Number(!editedMap?.config.FriendlyFire))}
                             labelElement={editedMap?.config.FriendlyFire ? 'Enabled' : 'Disabled'}
                             large
@@ -171,9 +186,9 @@ const MapEditModal: React.FC<MapEditModalProps> = ({ gameMap, isOpen, onClose })
                   return (
                     <Col key={mapBotIndex} size={4} className="py-1">
                       <ControlGroup fill>
-                        <HTMLSelect fill value={mapBot} onChange={(e) => setBot(mapBotIndex, e.target.value)}>
+                        <HTMLSelect fill value={mapBot.id} onChange={(e) => setBot(mapBotIndex, e.target.value)}>
                           {enemies?.map((player) => (
-                            <option key={player.id} value={player.name}>{player.name}</option>
+                            <option key={player.id} value={player.id}>{player.name}</option>
                           ))}
                         </HTMLSelect>
                         {mapBotIndex >= editedMap.config.minEnemies && (

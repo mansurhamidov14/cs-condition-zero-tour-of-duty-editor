@@ -2,7 +2,9 @@ import {
     BOT_PROFILE_INIT_EVENT,
     BOT_PROFILE_STATE_UPDATE_EVENT,
     BOT_PROFILE_UNMOUNT,
-    PLAYER_DELETED_EVENT
+    PLAYER_CREATED_EVENT,
+    PLAYER_DELETED_EVENT,
+    PLAYER_EDITED_EVENT
 } from "../consts";
 import { Config } from "./Config";
 import { Player } from "./Player";
@@ -51,6 +53,7 @@ export class BotCampaignProfile implements IBotProfile {
             config: { ...this.defaultConfig, WeaponPreference: [...this.defaultConfig.WeaponPreference] }
         }, this, false, true);
         this.allPlayers = [...this.allPlayers, newPlayer];
+        window.dispatchEvent(new CustomEvent<IPlayer>(PLAYER_CREATED_EVENT, { detail: newPlayer }));
         return newPlayer;
     }
 
@@ -60,12 +63,28 @@ export class BotCampaignProfile implements IBotProfile {
         if (!player.isNew) this.updateState();
     }
 
+    onCreatePlayer(callback: (updatedList: IPlayer) => void) {
+        window.addEventListener(PLAYER_CREATED_EVENT, ({ detail }: CustomEventInit<IPlayer>) => {
+            if (detail) {
+                callback(detail);
+            }
+        });
+    }
+
     onDeletePlayer(callback: (player: IPlayer) => void) {
         window.addEventListener(PLAYER_DELETED_EVENT, ({ detail }:  CustomEventInit<IPlayer>) => {
             if (detail) {
                 callback(detail);
             }
-        })
+        });
+    }
+
+    onEditPlayer(callback: (player: IPlayer) => void) {
+        window.addEventListener(PLAYER_EDITED_EVENT, ({ detail }:  CustomEventInit<IPlayer>) => {
+            if (detail) {
+                callback(detail);
+            }
+        });
     }
 
     deleteTemplate = (template: ITemplate): void => {

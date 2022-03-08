@@ -1,4 +1,5 @@
 import * as React from "react";
+import { IS_DEV } from "../../consts";
 
 type TabGroup = {
   activeTab: string;
@@ -25,7 +26,7 @@ export class TabsProvider extends React.Component<{}, Tabs> {
   state: Tabs = {
     rootTab: { activeTab: 'botProfile'},
     botProfile: { activeTab: 'baseConfig' },
-    careerMode: { activeTab: 'easy', disabled: true },
+    careerMode: { activeTab: 'easy', disabled: !IS_DEV },
   };
 
   setRootTab(id: string) {

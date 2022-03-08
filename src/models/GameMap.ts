@@ -1,7 +1,7 @@
 import { WEAPONS } from "../consts";
 import { TASK_FIELDS } from "../pages/CareerMode/consts";
 import { uuidv4 } from "../utils";
-import { IMap, IMapConfig, IMapOptions, MissionTask } from "./types";
+import { IMap, IMapConfig, IMapOptions, IPlayer, MissionTask } from "./types";
 
 export class GameMap implements IMap {
     id: string;
@@ -18,7 +18,13 @@ export class GameMap implements IMap {
             threshold: options.threshold,
             minEnemies: options.minEnemies,
             tasks: this.parseMissionTasks(options.tasks),
-            bots: options.bots.replaceAll('\t', ' ').split(' ').map(enemy => enemy.trim())
+            bots: options.bots
+                .replaceAll('\t', ' ')
+                .split(' ')
+                .map((enemy) => (
+                    difficultyMode.careerMode.players.find(p => p.name === enemy)
+                ))
+                .filter(Boolean) as IPlayer[]
         };
     }
 
@@ -52,8 +58,7 @@ export class GameMap implements IMap {
             }))
         };
         this.name = _data.name;
-        this.difficultyMode.saved = false;
-        this.difficultyMode.careerMode.updateState();
+        this.difficultyMode.updateState();
     }
 
     public parseTaskName(task: MissionTask) {

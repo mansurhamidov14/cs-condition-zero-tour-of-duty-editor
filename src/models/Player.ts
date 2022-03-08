@@ -1,3 +1,4 @@
+import { PLAYER_EDITED_EVENT } from "../consts";
 import { Template } from "./Template";
 import type { IPlayer, IPlayerOptions, ITemplate } from "./types";
 
@@ -13,8 +14,11 @@ export class Player extends Template implements IPlayer {
     save(data: IPlayer | ITemplate) {
         this.config = data.config;
         this.name = data.name;
-        this.isNew = false;
         this.templates = (data as any).templates;
         this.botProfile.updateState();
+        if (!this.isNew) {
+            window.dispatchEvent(new CustomEvent<IPlayer>(PLAYER_EDITED_EVENT, { detail: this }));
+        }
+        this.isNew = false;
     }
 }

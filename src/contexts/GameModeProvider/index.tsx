@@ -33,7 +33,9 @@ class _CareerModeProvider extends React.Component<Props, ICareerMode> {
   
       (window as any).careerMode = careerMode;
 
+      botProfile?.onCreatePlayer((player) => careerMode.handlePlayerAdd(player));
       botProfile?.onDeletePlayer((player) => careerMode.handlePlayerDelete(player));
+      botProfile?.onEditPlayer(() => careerMode.setUnsaved());
       careerMode.onMount(updated => this.setState(updated));
     });
   }

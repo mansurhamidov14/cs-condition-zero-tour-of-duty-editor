@@ -1,5 +1,6 @@
 import { CAREER_MODE_STATE_UPDATE_EVENT, CAREER_MODE_UNMOUNT, IS_DEV } from "../consts";
 import { easyModeVdfExample, expertModeExample, hardModeVdfExample, normalModeVdfExample } from "../contexts/GameModeProvider/mocks";
+import { Character } from "./Character";
 import { DifficultyMode } from "./DifficultyMode";
 import { EDifficulty, FileFromExplorer, ICareerMode, IDifficultyModeState, IPlayer } from "./types";
 
@@ -17,13 +18,24 @@ export class CareerMode implements ICareerMode {
         this.expert = new DifficultyMode({ content: IS_DEV ? expertModeExample : ''}, EDifficulty.EXPERT, this);
     }
 
+    handlePlayerAdd(player: IPlayer) {
+        this.players = [...this.players, player];
+        Object.values(EDifficulty).forEach((difficulty) => {
+            this[difficulty].Characters = [
+                ...this[difficulty].Characters,
+                new Character(player, false, this[difficulty])
+            ];
+        });
+        this.updateState();
+    }
+
     handlePlayerDelete (player: IPlayer): void {
         Object.values(EDifficulty).forEach((difficulty) => {
             this[difficulty].Characters = this[difficulty].Characters.filter((character) => {
                 return character.player.id !== player.id;
             });
             this[difficulty].Maps.forEach((gameMap) => {
-                gameMap.config.bots = gameMap.config.bots.filter(bot => bot !== player.name);
+                gameMap.config.bots = gameMap.config.bots.filter(bot => bot.id !== player.id);
             });
         });
     }
@@ -57,5 +69,12 @@ export class CareerMode implements ICareerMode {
 
     hasUnsavedFile = (): boolean => {
         return Object.values(EDifficulty).some((difficulty) => !this[difficulty].saved);
+    }
+
+    setUnsaved() {
+        Object.values(EDifficulty).forEach((difficulty) => {
+            if (this[difficulty].mounted) this[difficulty].saved = false
+        });
+        this.updateState();
     }
 }

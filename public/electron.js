@@ -39,42 +39,42 @@ const mainMenuTemplate = [
             id: 'easy-missions',
             label: 'Easy missions',
             accelerator: 'Ctrl+Shift+E',
-            enabled: false,
+            enabled: isDev,
             click: () => openFile('CareerEasyMissions', ['vdf'])
           },
           {
             id: 'normal-missions',
             label: 'Normal missions',
             accelerator: 'Ctrl+Shift+N',
-            enabled: false,
+            enabled: isDev,
             click: () => openFile('CareerNormalMissions', ['vdf'])
           },
           {
             id: 'hard-missions',
             label: 'Hard missions',
             accelerator: 'Ctrl+Shift+H',
-            enabled: false,
+            enabled: isDev,
             click: () => openFile('CareerHardMissions', ['vdf'])
           },
           {
             id: 'expert-missions',
             label: 'Expert missions',
             accelerator: 'Ctrl+Shift+X',
-            enabled: false,
+            enabled: isDev,
             click: () => openFile('CareerExpertMissions', ['vdf'])
           },
         ]
       },
       {
         id: "save",
-        enabled: false,
+        enabled: isDev,
         label: 'Save',
         accelerator: 'Ctrl+S',
         click: () => sendEvent('saveFile')
       },
       {
         id: "save-as",
-        enabled: false,
+        enabled: isDev,
         label: 'Save as',
         accelerator: 'Ctrl+Alt+S',
         click: () => sendEvent('saveFileAs')

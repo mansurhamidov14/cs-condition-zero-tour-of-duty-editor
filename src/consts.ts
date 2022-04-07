@@ -1,6 +1,6 @@
 import { IConfigOptions } from "./models/types";
 
-export const IS_DEV = false;
+export const IS_DEV = process.env.NODE_ENV === 'development';
 
 type Field = |
     {
@@ -85,6 +85,7 @@ export const FIELDS: Field[] = [
 
 export const WEAPONS_WITHOUT_GROUPS = WEAPONS.filter(({ isWeaponGroup }) => !isWeaponGroup);
 
+// events
 export const BOT_PROFILE_INIT_EVENT = 'botProfileInitialized';
 export const BOT_PROFILE_STATE_UPDATE_EVENT = 'botProfileStateUpdate';
 export const BOT_PROFILE_UNMOUNT = 'botProfileUnmount';
@@ -92,3 +93,5 @@ export const CONFIRMATION_REQUEST_EVENT = 'confirmationRequested';
 export const CAREER_MODE_STATE_UPDATE_EVENT = 'careerModeStateUpdate';
 export const CAREER_MODE_UNMOUNT = 'careerModeUnmount';
 export const PLAYER_DELETED_EVENT = 'playerDeleted';
+export const PLAYER_EDITED_EVENT = 'playerEdited';
+export const PLAYER_CREATED_EVENT = 'playerCreated';

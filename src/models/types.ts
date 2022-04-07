@@ -19,6 +19,8 @@ export interface IBotProfile extends Saveable, IStateUpdater {
     deleteTemplate: (template: ITemplate) => void;
     onMount: (callback: (botProfile: IBotProfile) => void) => void;
     onDeletePlayer: (callback: (player: IPlayer) => void) => void;
+    onEditPlayer: (callback: (player: IPlayer) => void) => void;
+    onCreatePlayer: (callback: (updatedList: IPlayer) => void) => void;
     unmount: () => void;
 }
 
@@ -109,7 +111,7 @@ export interface IMapOptions extends IMapConfigBase {
 }
 
 export interface IMapConfig extends IMapConfigBase {
-    bots: string[];
+    bots: IPlayer[];
     tasks: MissionTask[];
 }
 
@@ -142,8 +144,10 @@ export interface ICareerMode extends CareerModeDifficulties {
     mounted: boolean;
     players: IPlayer[];
     loadFromVdf: (difficulty: EDifficulty, file: FileFromExplorer, path: string) => void;
+    handlePlayerAdd: (player: IPlayer) => void;
     handlePlayerDelete: (player: IPlayer) => void;
-    onMount: (ccallback: (careerMode: ICareerMode) => void) => void;
+    onMount: (callback: (careerMode: ICareerMode) => void) => void;
+    setUnsaved: () => void;
     updateState: () => void;
     hasUnsavedFile: () => boolean;
 }
